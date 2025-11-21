@@ -1,62 +1,84 @@
-[
-  {
-    "admNo": "101",
-    "rollNo": "1",
-    "class": "10th",
-    "name": "Ayaan Ahmed Bhat",
-    "father": "Bilal Ahmed Bhat",
-    "mother": "Fatima Begum",
-    "aadhaar": "1234-5678-9012",
-    "dob": "2012-05-15",
-    "contact": "9900000000",
-    "category": "General",
-    "gender": "Male",
-    "subjects": [
-      { "name": "English", "fa1": 10, "fa2": 9, "fa3": 9, "sa1": 25, "sa2": 35 },
-      { "name": "Mathematics", "fa1": 8, "fa2": 8, "fa3": 9, "sa1": 20, "sa2": 30 },
-      { "name": "Urdu", "fa1": 10, "fa2": 10, "fa3": 10, "sa1": 28, "sa2": 38 },
-      { "name": "Kashmiri", "fa1": 9, "fa2": 9, "fa3": 10, "sa1": 27, "sa2": 36 },
-      { "name": "Science", "fa1": 7, "fa2": 8, "fa3": 8, "sa1": 22, "sa2": 32 }
-    ]
-  },
-  {
-    "admNo": "102",
-    "rollNo": "2",
-    "class": "10th",
-    "name": "Zara Khan",
-    "father": "Imran Khan",
-    "mother": "Saima Khan",
-    "aadhaar": "9876-5432-1098",
-    "dob": "2013-02-20",
-    "contact": "9911111111",
-    "category": "OBC",
-    "gender": "Female",
-    "subjects": [
-      { "name": "English", "fa1": 9, "fa2": 9, "fa3": 10, "sa1": 28, "sa2": 37 },
-      { "name": "Mathematics", "fa1": 10, "fa2": 10, "fa3": 10, "sa1": 30, "sa2": 40 },
-      { "name": "Urdu", "fa1": 8, "fa2": 9, "fa3": 9, "sa1": 25, "sa2": 35 },
-      { "name": "Kashmiri", "fa1": 9, "fa2": 8, "fa3": 9, "sa1": 26, "sa2": 34 },
-      { "name": "Science", "fa1": 9, "fa2": 9, "fa3": 9, "sa1": 28, "sa2": 38 }
-    ]
-  },
-  {
-    "admNo": "103",
-    "rollNo": "1",
-    "class": "9th",
-    "name": "Rahul Sharma",
-    "father": "Vikram Sharma",
-    "mother": "Priya Sharma",
-    "aadhaar": "5566-7788-9900",
-    "dob": "2012-11-05",
-    "contact": "9876543210",
-    "category": "General",
-    "gender": "Male",
-    "subjects": [
-      { "name": "English", "fa1": 8, "fa2": 8, "fa3": 8, "sa1": 24, "sa2": 34 },
-      { "name": "Mathematics", "fa1": 10, "fa2": 10, "fa3": 10, "sa1": 29, "sa2": 39 },
-      { "name": "Urdu", "fa1": 7, "fa2": 7, "fa3": 8, "sa1": 20, "sa2": 30 },
-      { "name": "Kashmiri", "fa1": 8, "fa2": 8, "fa3": 8, "sa1": 22, "sa2": 32 },
-      { "name": "Science", "fa1": 9, "fa2": 9, "fa3": 9, "sa1": 26, "sa2": 36 }
-    ]
-  }
-]
+{
+  "supported_sessions": [
+    "2021-2022",
+    "2022-2023",
+    "2023-2024",
+    "2024-2025",
+    "2025-2026"
+  ],
+  "students": [
+    {
+      "studentId": "uuid-1",
+      "admNo": "1",
+      "name": "Zara Khan",
+      "father": "Imran Khan",
+      "mother": "Saima Khan",
+      "aadhaar": "9876-5432-1098",
+      "dob": "2013-02-20",
+      "contact": "9911111111",
+      "category": "OBC",
+      "gender": "Female",
+      "sessions": [
+        {
+          "session": "2021-2022",
+          "class": "LKG",
+          "rollNo": "1",
+          "subjects": [
+            { "name": "English", "fa1": 9, "fa2": 9, "fa3": 10, "sa1": 28, "sa2": 37 },
+            { "name": "Mathematics", "fa1": 10, "fa2": 10, "fa3": 10, "sa1": 30, "sa2": 40 },
+            { "name": "Urdu", "fa1": 8, "fa2": 9, "fa3": 9, "sa1": 25, "sa2": 35 },
+            { "name": "Kashmiri", "fa1": 9, "fa2": 8, "fa3": 9, "sa1": 26, "sa2": 34 },
+            { "name": "Science", "fa1": 9, "fa2": 9, "fa3": 9, "sa1": 28, "sa2": 38 }
+          ]
+        },
+        {
+          "session": "2022-2023",
+          "class": "UKG",
+          "rollNo": "3",
+          "subjects": [
+            { "name": "English", "fa1": 9, "fa2": 9, "fa3": 10, "sa1": 28, "sa2": 37 },
+            { "name": "Mathematics", "fa1": 10, "fa2": 10, "fa3": 10, "sa1": 30, "sa2": 40 },
+            { "name": "Urdu", "fa1": 8, "fa2": 9, "fa3": 9, "sa1": 25, "sa2": 35 },
+            { "name": "Kashmiri", "fa1": 9, "fa2": 8, "fa3": 9, "sa1": 26, "sa2": 34 },
+            { "name": "Science", "fa1": 9, "fa2": 9, "fa3": 9, "sa1": 28, "sa2": 38 }
+          ]
+        },
+        {
+          "session": "2023-2024",
+          "class": "1st",
+          "rollNo": "3",
+          "subjects": [
+            { "name": "English", "fa1": 9, "fa2": 9, "fa3": 10, "sa1": 28, "sa2": 37 },
+            { "name": "Mathematics", "fa1": 10, "fa2": 10, "fa3": 10, "sa1": 30, "sa2": 40 },
+            { "name": "Urdu", "fa1": 8, "fa2": 9, "fa3": 9, "sa1": 25, "sa2": 35 },
+            { "name": "Kashmiri", "fa1": 9, "fa2": 8, "fa3": 9, "sa1": 26, "sa2": 34 },
+            { "name": "Science", "fa1": 9, "fa2": 9, "fa3": 9, "sa1": 28, "sa2": 38 }
+          ]
+        }
+      ]
+    },
+    {
+      "studentId": "uuid-2",
+      "admNo": "101",
+      "name": "Ayaan Ahmed",
+      "father": "Bilal Ahmed",
+      "mother": "Fatima Begum",
+      "aadhaar": "1111-2222-3333",
+      "dob": "2012-05-15",
+      "contact": "9900000000",
+      "category": "General",
+      "gender": "Male",
+      "sessions": [
+        {
+          "session": "2023-2024",
+          "class": "9th",
+          "rollNo": "15",
+          "subjects": [
+             { "name": "English", "fa1": 10, "fa2": 10, "fa3": 10, "sa1": 30, "sa2": 40 },
+             { "name": "Math", "fa1": 9, "fa2": 9, "fa3": 9, "sa1": 25, "sa2": 35 }
+          ]
+        }
+      ]
+    }
+  ]
+}

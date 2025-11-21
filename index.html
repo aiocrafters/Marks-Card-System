@@ -23,7 +23,7 @@
             margin: 20px auto;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             position: relative;
-            font-family: 'Noto Serif', serif; /* More formal font for the card */
+            font-family: 'Noto Serif', serif;
         }
 
         /* Table Styling */
@@ -77,22 +77,33 @@
             .no-print {
                 display: none !important;
             }
+            /* Ensures container allows scrolling/paging */
+            #cardsContainer {
+                display: block !important;
+            }
             .paper-sheet {
                 box-shadow: none;
                 margin: 0;
                 width: 100%;
-                height: 100%;
-                padding: 10mm; /* Adjust for printer margins */
+                height: 100%; /* Use height to fill page */
+                padding: 10mm;
+                /* CRITICAL: Forces each card to be on a new page */
+                break-after: page; 
+                page-break-after: always; 
+            }
+            /* Hide the last break to avoid empty sheet at end */
+            .paper-sheet:last-child {
+                break-after: auto;
+                page-break-after: auto;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- CONTROL PANEL (Hidden when printing) -->
+    <!-- CONTROL PANEL -->
     <div class="no-print bg-white border-b shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <!-- Changed to flex-col to stack header and controls vertically -->
             <div class="flex flex-col items-center gap-4">
                 
                 <div class="flex items-center gap-2">
@@ -102,36 +113,46 @@
 
                 <div class="flex flex-wrap w-full md:w-auto gap-2 items-center bg-gray-50 p-2 rounded-lg border">
                     
-                    <!-- Filter 1: Class Dropdown -->
+                    <!-- Session Filter -->
+                    <div class="flex flex-col text-xs">
+                        <label class="font-bold text-gray-500 ml-1">Session</label>
+                        <select id="sessionFilter" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                            <!-- 'All' and other years populated by JS -->
+                        </select>
+                    </div>
+
+                    <!-- Class Filter -->
                     <div class="flex flex-col text-xs">
                         <label class="font-bold text-gray-500 ml-1">Class</label>
                         <select id="classFilter" onchange="updateSearchOptions()" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                             <option value="All">All Classes</option>
-                            <option value="10th">10th</option>
+                            <option value="LKG">LKG</option>
+                            <option value="UKG">UKG</option>
+                            <option value="1st">1st</option>
+                            <option value="2nd">2nd</option>
                             <option value="9th">9th</option>
+                            <option value="10th">10th</option>
                         </select>
                     </div>
 
-                    <!-- Filter 2: Search Type -->
+                    <!-- Search Type (Updated with Student ID) -->
                     <div class="flex flex-col text-xs">
                         <label class="font-bold text-gray-500 ml-1">Search By</label>
                         <select id="searchType" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" onchange="updateSearchOptions()">
                             <option value="admNo">Admission No</option>
+                            <option value="studentId">Student ID</option> <!-- Added -->
                             <option value="rollNo">Roll No</option>
                             <option value="name">Name</option>
                         </select>
                     </div>
 
-                    <!-- Input Field with Dynamic Dropdown -->
+                    <!-- Input Field -->
                     <div class="flex flex-col text-xs flex-1 min-w-[200px]">
                         <label class="font-bold text-gray-500 ml-1">Value</label>
                         <input type="text" id="searchInput" list="dynamicOptions" placeholder="Select or Type..." 
                                class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                onkeypress="handleEnter(event)" onfocus="updateSearchOptions()">
-                        <!-- The Datalist acts as the dropdown options -->
-                        <datalist id="dynamicOptions">
-                            <!-- Options will be populated by JS -->
-                        </datalist>
+                        <datalist id="dynamicOptions"></datalist>
                     </div>
 
                     <button onclick="searchStudent()" 
@@ -148,223 +169,203 @@
         </div>
     </div>
 
-    <!-- MAIN REPORT CARD CANVAS -->
+    <!-- MAIN CONTAINER FOR CARDS -->
     <div class="flex justify-center p-4">
-        <div id="marksCard" class="paper-sheet hidden">
+        <!-- Replaced single static card with a container for dynamic cards -->
+        <div id="cardsContainer" class="w-full flex flex-col items-center gap-8">
+            <!-- Cards will be injected here -->
             
-            <!-- School Header -->
-            <div class="text-center border-b-2 border-black pb-4 mb-6">
-                <h1 class="text-3xl font-bold uppercase tracking-wider mb-1">Government High School</h1>
-                <p class="text-sm font-semibold text-gray-600">Department of School Education • Kashmir</p>
-                <h2 class="text-xl font-bold mt-4 border-2 border-black inline-block px-6 py-1 rounded-full">MARKS CARD / RESULT SHEET</h2>
-                <p class="mt-2">Academic Session: <span id="dispSession">2024-2025</span></p>
-            </div>
-
-            <!-- Student Details Grid -->
-            <div class="grid grid-cols-2 gap-x-12 gap-y-4 mb-8 text-sm">
-                <div class="flex">
-                    <span class="font-bold w-32">Student Name:</span>
-                    <span class="border-b border-dotted border-black flex-1" id="dispName"></span>
+            <!-- Welcome Screen (Visible initially) -->
+            <div id="welcomeScreen" class="text-center mt-20 text-gray-500">
+                <i class="fas fa-id-card text-6xl mb-4 text-gray-300"></i>
+                <h2 class="text-2xl font-bold">Welcome to the Marks Card System</h2>
+                <p class="mt-2 max-w-md mx-auto">Use the filters above to find a student.</p>
+                <div class="mt-6 bg-white p-4 rounded-lg border shadow-sm inline-block text-left text-sm">
+                    <p class="font-bold mb-2">Try searching for:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Adm No: <span class="font-mono bg-gray-100 px-1">1</span> (All Sessions)</li>
+                        <li>Student ID: (Select from dropdown)</li>
+                    </ul>
                 </div>
-                <div class="flex">
-                    <span class="font-bold w-32">Admission No:</span>
-                    <span class="border-b border-dotted border-black flex-1" id="dispAdm"></span>
-                </div>
-                <div class="flex">
-                    <span class="font-bold w-32">Class / Roll No:</span>
-                    <span class="border-b border-dotted border-black flex-1"><span id="dispClass"></span> / <span id="dispRoll"></span></span>
-                </div>
-                <div class="flex">
-                    <span class="font-bold w-32">Gender:</span>
-                    <span class="border-b border-dotted border-black flex-1" id="dispGender"></span>
-                </div>
-                <div class="flex">
-                    <span class="font-bold w-32">Father's Name:</span>
-                    <span class="border-b border-dotted border-black flex-1" id="dispFather"></span>
-                </div>
-                 <div class="flex">
-                    <span class="font-bold w-32">D.O.B:</span>
-                    <span class="border-b border-dotted border-black flex-1" id="dispDob"></span>
-                </div>
-                <div class="flex">
-                    <span class="font-bold w-32">Mother's Name:</span>
-                    <span class="border-b border-dotted border-black flex-1" id="dispMother"></span>
-                </div>
-                <div class="flex">
-                    <span class="font-bold w-32">Category:</span>
-                    <span class="border-b border-dotted border-black flex-1" id="dispCategory"></span>
-                </div>
-            </div>
-
-            <!-- Marks Table -->
-            <table class="marks-table">
-                <thead>
-                    <tr>
-                        <th rowspan="2" class="w-1/4 text-left-align">SUBJECTS</th>
-                        <th colspan="4">FORMATIVE ASSESSMENT (FA)</th>
-                        <th colspan="2">SUMMATIVE (SA)</th>
-                        <th rowspan="2">GRAND TOTAL<br>(100)</th>
-                        <th rowspan="2">GRADE</th>
-                    </tr>
-                    <tr>
-                        <th>FA1</th>
-                        <th>FA2</th>
-                        <th>FA3</th>
-                        <th>Total (FA)</th>
-                        <th>SA1</th>
-                        <th>SA2</th>
-                    </tr>
-                </thead>
-                <tbody id="marksBody">
-                    <!-- Rows generated by JS -->
-                </tbody>
-                <tfoot>
-                    <tr class="bg-gray-100 font-bold">
-                        <td class="text-left-align">OVERALL RESULT</td>
-                        <td colspan="6"></td>
-                        <td id="grandTotal">0</td>
-                        <td id="grandGrade">-</td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            <!-- Remarks Section -->
-            <div class="mt-8 border border-black p-4 h-24">
-                <span class="font-bold">Class Teacher's Remarks:</span>
-                <p class="italic mt-2 text-gray-700" id="dispRemarks">Promoted to next class with excellent performance.</p>
-            </div>
-
-            <!-- Grading Scale Legend -->
-            <div class="mt-4 text-xs text-gray-500 flex justify-between">
-                <span>A+: 91-100</span>
-                <span>A: 81-90</span>
-                <span>B+: 71-80</span>
-                <span>B: 61-70</span>
-                <span>C+: 51-60</span>
-                <span>C: 41-50</span>
-                <span>D: 33-40</span>
-                <span>E: Below 33</span>
-            </div>
-
-            <!-- Signatures -->
-            <div class="signature-grid">
-                <div>
-                    <div class="h-12"></div> <!-- Space for sign -->
-                    <div class="sign-line">Class Teacher</div>
-                </div>
-                <div>
-                    <div class="h-12"></div>
-                    <div class="sign-line">Examination In-Charge</div>
-                </div>
-                <div>
-                    <div class="h-12">
-                         <!-- Optional: Add an image tag here for a digital stamp -->
-                    </div> 
-                    <div class="sign-line">Headmaster / Principal</div>
-                </div>
-            </div>
-            
-            <div class="text-center text-xs mt-10 text-gray-400">
-                Generated on <span id="printDate"></span> | System Ver 2.1 (Direct DB)
-            </div>
-
-        </div>
-
-        <!-- Empty State / Welcome Screen -->
-        <div id="welcomeScreen" class="text-center mt-20 text-gray-500">
-            <i class="fas fa-id-card text-6xl mb-4 text-gray-300"></i>
-            <h2 class="text-2xl font-bold">Welcome to the Marks Card System</h2>
-            <p class="mt-2 max-w-md mx-auto">Use the filters above to find a student.</p>
-            <div class="mt-6 bg-white p-4 rounded-lg border shadow-sm inline-block text-left text-sm">
-                <p class="font-bold mb-2">Try searching for:</p>
-                <ul class="list-disc pl-5 space-y-1">
-                    <li>Adm No: <span class="font-mono bg-gray-100 px-1">101</span> (Class 10th)</li>
-                    <li>Roll No: <span class="font-mono bg-gray-100 px-1">1</span> (Select Class 9th)</li>
-                    <li>Roll No: <span class="font-mono bg-gray-100 px-1">2</span> (Select Class 10th)</li>
-                </ul>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. THE RESULT REGISTER (FETCHED FROM JSON) ---
+        // --- 1. STATE & LOAD ---
         let resultRegister = [];
+        let supportedSessions = [];
 
-        // Function to fetch the external JSON file
+        window.onload = loadDatabase;
+
         async function loadDatabase() {
             const statusMsg = document.getElementById('statusMsg');
             try {
-                // Fetch the file. Note: This requires a local server (http://) not file://
                 const response = await fetch('students_db.json');
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                const data = await response.json();
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                // Parse structure
+                if (Array.isArray(data)) {
+                    resultRegister = data;
+                } else {
+                    resultRegister = data.students || [];
+                    supportedSessions = data.supported_sessions || ["2023-2024", "2024-2025"];
                 }
 
-                resultRegister = await response.json();
+                // Populate Session Dropdown
+                const sessionSelect = document.getElementById('sessionFilter');
+                sessionSelect.innerHTML = `<option value="All">All Sessions</option>`; // Add All option
                 
-                // Success Message
-                statusMsg.innerText = "Database loaded successfully from students_db.json";
+                supportedSessions.forEach(year => {
+                    const opt = document.createElement('option');
+                    opt.value = year;
+                    opt.innerText = year;
+                    sessionSelect.appendChild(opt);
+                });
+                
+                // Select "All" by default to show full history
+                sessionSelect.value = "All"; 
+
+                statusMsg.innerText = "Database loaded successfully.";
                 statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-green-600";
-                console.log("DB Loaded:", resultRegister.length + " students");
                 
-                // Initial population of dropdown
                 updateSearchOptions();
 
             } catch (error) {
                 console.error("Could not load database:", error);
-                statusMsg.innerText = "Error: Run on Local Server to fetch JSON (View Console).";
+                statusMsg.innerText = "Error: Run on Local Server to fetch JSON.";
                 statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
             }
         }
 
-        // --- 2. LOGIC FUNCTIONS ---
+        // --- 2. SEARCH LOGIC ---
 
         function handleEnter(e) {
             if(e.key === 'Enter') searchStudent();
         }
 
-        // UPDATED: Updates both placeholder and the dropdown options
         function updateSearchOptions() {
             const type = document.getElementById('searchType').value;
             const classFilter = document.getElementById('classFilter').value;
+            const sessionFilter = document.getElementById('sessionFilter').value; // 'All' or specific year
             const input = document.getElementById('searchInput');
             const datalist = document.getElementById('dynamicOptions');
 
-            // 1. Update Placeholder Text
+            // 1. Update Placeholder
             if(type === 'admNo') input.placeholder = "Select Admission No...";
             else if(type === 'rollNo') input.placeholder = "Select Roll No...";
+            else if(type === 'studentId') input.placeholder = "Select UUID...";
             else if(type === 'name') input.placeholder = "Select Student Name...";
 
-            // 2. Clear current options
+            // 2. Clear options
             datalist.innerHTML = '';
 
-            // 3. Filter Data based on Class selection
-            const filteredStudents = resultRegister.filter(s => {
-                return classFilter === "All" || s.class === classFilter;
+            // 3. Logic to get Valid Options
+            let options = [];
+
+            resultRegister.forEach(student => {
+                // Determine if student is relevant based on filters
+                let isRelevant = false;
+
+                // If searching by Personal ID (Adm, Name, ID), we generally want to see them
+                // regardless of session, UNLESS class filter is strict.
+                
+                // Check if they have ANY session that matches current filters
+                const matchingSessions = student.sessions.filter(s => {
+                    const sessionMatch = (sessionFilter === "All") || (s.session === sessionFilter);
+                    const classMatch = (classFilter === "All") || (s.class === classFilter);
+                    return sessionMatch && classMatch;
+                });
+
+                if (matchingSessions.length > 0) {
+                    if (type === 'admNo') options.push(student.admNo);
+                    if (type === 'name') options.push(student.name);
+                    if (type === 'studentId') options.push(student.studentId);
+                    
+                    if (type === 'rollNo') {
+                        // Push roll numbers from matching sessions
+                        matchingSessions.forEach(ms => options.push(ms.rollNo));
+                    }
+                }
             });
 
-            // 4. Extract values based on Search Type
-            let options = [];
-            if (type === 'admNo') {
-                options = filteredStudents.map(s => s.admNo);
-            } else if (type === 'rollNo') {
-                // For roll numbers, it's useful to show which class/name it belongs to if "All" is selected
-                options = filteredStudents.map(s => s.rollNo);
-            } else if (type === 'name') {
-                options = filteredStudents.map(s => s.name);
-            }
-
-            // 5. Remove duplicates (using Set) and Sort
+            // 4. Unique and Sort
             const uniqueOptions = [...new Set(options)].sort();
 
-            // 6. Add options to datalist
+            // 5. Populate
             uniqueOptions.forEach(val => {
                 const option = document.createElement('option');
                 option.value = val;
                 datalist.appendChild(option);
             });
         }
+
+        function searchStudent() {
+            const sessionFilter = document.getElementById('sessionFilter').value;
+            const searchType = document.getElementById('searchType').value;
+            const query = document.getElementById('searchInput').value.trim();
+            const statusMsg = document.getElementById('statusMsg');
+            const container = document.getElementById('cardsContainer');
+            const welcome = document.getElementById('welcomeScreen');
+
+            if (!query) {
+                statusMsg.innerText = "Please select or enter a value.";
+                return;
+            }
+
+            // 1. Find the Student Object first
+            const student = resultRegister.find(s => {
+                if (searchType === 'admNo') return s.admNo === query;
+                if (searchType === 'studentId') return s.studentId === query;
+                if (searchType === 'name') return s.name.toLowerCase() === query.toLowerCase();
+                // Roll No is trickier because it lives in sessions, check if ANY session has this roll no
+                if (searchType === 'rollNo') {
+                    return s.sessions.some(sess => sess.rollNo === query);
+                }
+                return false;
+            });
+
+            if (!student) {
+                statusMsg.innerText = `Student not found!`;
+                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
+                // Show welcome, hide old cards
+                container.innerHTML = ''; 
+                container.appendChild(welcome);
+                welcome.classList.remove('hidden');
+                return;
+            }
+
+            // 2. Filter Sessions for this student
+            let sessionsToShow = student.sessions.filter(sess => {
+                if (sessionFilter !== "All" && sess.session !== sessionFilter) return false;
+                // Add class filtering if needed, though usually searching by ID implies showing that student regardless of class
+                return true; 
+            });
+
+            if (sessionsToShow.length === 0) {
+                 statusMsg.innerText = `Student found, but no data for session ${sessionFilter}`;
+                 statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
+                 container.innerHTML = '';
+                 container.appendChild(welcome);
+                 return;
+            }
+
+            // 3. Render Cards
+            statusMsg.innerText = `Found ${sessionsToShow.length} record(s).`;
+            statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-green-600";
+            
+            // Clear container (removes welcome screen automatically)
+            container.innerHTML = '';
+
+            sessionsToShow.forEach(sessionData => {
+                const cardHTML = generateCardHTML(student, sessionData);
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        // --- 3. HTML GENERATION ---
 
         function getGrade(score) {
             if (score >= 91) return 'A+';
@@ -377,124 +378,128 @@
             return 'E';
         }
 
-        function searchStudent() {
-            const classFilter = document.getElementById('classFilter').value;
-            const searchType = document.getElementById('searchType').value;
-            const query = document.getElementById('searchInput').value.trim();
-            
-            const statusMsg = document.getElementById('statusMsg');
-            const card = document.getElementById('marksCard');
-            const welcome = document.getElementById('welcomeScreen');
+        // Generates the full HTML string for one A4 sheet
+        function generateCardHTML(personal, session) {
+            const marksRows = (session.subjects || []).map(sub => {
+                const faTotal = (sub.fa1||0) + (sub.fa2||0) + (sub.fa3||0);
+                const subTotal = faTotal + (sub.sa1||0) + (sub.sa2||0);
+                return `
+                    <tr>
+                        <td class="text-left-align font-semibold border border-black p-2">${sub.name}</td>
+                        <td class="border border-black p-2">${sub.fa1||0}</td>
+                        <td class="border border-black p-2">${sub.fa2||0}</td>
+                        <td class="border border-black p-2">${sub.fa3||0}</td>
+                        <td class="bg-gray-50 font-semibold border border-black p-2">${faTotal}</td>
+                        <td class="border border-black p-2">${sub.sa1||0}</td>
+                        <td class="border border-black p-2">${sub.sa2||0}</td>
+                        <td class="font-bold text-blue-800 border border-black p-2">${subTotal}</td>
+                        <td class="font-bold border border-black p-2">${getGrade(subTotal)}</td>
+                    </tr>
+                `;
+            }).join('');
 
-            // Safety check if DB hasn't loaded yet
-            if (resultRegister.length === 0) {
-                statusMsg.innerText = "Database is empty or not loaded yet.";
-                return;
-            }
-
-            if (!query) {
-                statusMsg.innerText = "Please select or enter a value.";
-                return;
-            }
-
-            // FIND logic
-            const student = resultRegister.find(s => {
-                // 1. Check Class Filter (If "All", ignore check, else match exactly)
-                const classMatch = (classFilter === "All") || (s.class === classFilter);
-                
-                // 2. Check Search Type
-                let valueMatch = false;
-                if(searchType === 'admNo') {
-                    valueMatch = (s.admNo === query);
-                } else if (searchType === 'rollNo') {
-                    valueMatch = (s.rollNo === query);
-                } else if (searchType === 'name') {
-                    // Case insensitive check for names
-                    valueMatch = (s.name.toLowerCase() === query.toLowerCase());
-                }
-
-                return classMatch && valueMatch;
-            });
-
-            if (student) {
-                // Use green for success messages
-                statusMsg.innerText = ""; 
-                welcome.classList.add('hidden');
-                card.classList.remove('hidden');
-                populateCard(student);
-            } else {
-                statusMsg.innerText = `Student not found! (Checked Class: ${classFilter}, ${searchType}: ${query})`;
-                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
-                welcome.classList.remove('hidden');
-                card.classList.add('hidden');
-            }
-        }
-
-        function populateCard(data) {
-            // 1. Fill Personal Details
-            document.getElementById('dispName').innerText = data.name;
-            document.getElementById('dispAdm').innerText = data.admNo;
-            document.getElementById('dispClass').innerText = data.class || "-"; 
-            document.getElementById('dispRoll').innerText = data.rollNo || "-";
-            document.getElementById('dispFather').innerText = data.father;
-            document.getElementById('dispMother').innerText = data.mother;
-            document.getElementById('dispGender').innerText = data.gender;
-            document.getElementById('dispDob').innerText = data.dob;
-            document.getElementById('dispCategory').innerText = data.category;
-            document.getElementById('printDate').innerText = new Date().toLocaleDateString();
-
-            // 2. Fill Marks Table
-            const tbody = document.getElementById('marksBody');
-            tbody.innerHTML = ''; // Clear previous
-            
+            // Calculate Grand Total
             let grandSum = 0;
-            let totalSubjects = 0;
+            let count = 0;
+            (session.subjects || []).forEach(sub => {
+                grandSum += (sub.fa1||0) + (sub.fa2||0) + (sub.fa3||0) + (sub.sa1||0) + (sub.sa2||0);
+                count++;
+            });
+            const avg = count > 0 ? grandSum/count : 0;
+            const overallGrade = getGrade(avg);
 
-            if(data.subjects && Array.isArray(data.subjects)) {
-                data.subjects.forEach(sub => {
-                    const faTotal = sub.fa1 + sub.fa2 + sub.fa3;
-                    const subjectTotal = faTotal + sub.sa1 + sub.sa2;
-                    
-                    grandSum += subjectTotal;
-                    totalSubjects++;
+            return `
+            <div class="paper-sheet">
+                <!-- Header -->
+                <div class="text-center border-b-2 border-black pb-4 mb-6">
+                    <h1 class="text-3xl font-bold uppercase tracking-wider mb-1">Government High School</h1>
+                    <p class="text-sm font-semibold text-gray-600">Department of School Education • Kashmir</p>
+                    <h2 class="text-xl font-bold mt-4 border-2 border-black inline-block px-6 py-1 rounded-full">MARKS CARD / RESULT SHEET</h2>
+                    <p class="mt-2">Academic Session: <span class="font-bold">${session.session}</span></p>
+                </div>
 
-                    const row = `
+                <!-- Details -->
+                <div class="grid grid-cols-2 gap-x-12 gap-y-4 mb-8 text-sm">
+                    <div class="flex"><span class="font-bold w-32">Student Name:</span><span class="border-b border-dotted border-black flex-1">${personal.name}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Admission No:</span><span class="border-b border-dotted border-black flex-1">${personal.admNo}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Class / Roll No:</span><span class="border-b border-dotted border-black flex-1">${session.class} / ${session.rollNo}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Gender:</span><span class="border-b border-dotted border-black flex-1">${personal.gender}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Father's Name:</span><span class="border-b border-dotted border-black flex-1">${personal.father}</span></div>
+                    <div class="flex"><span class="font-bold w-32">D.O.B:</span><span class="border-b border-dotted border-black flex-1">${personal.dob}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Mother's Name:</span><span class="border-b border-dotted border-black flex-1">${personal.mother}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Category:</span><span class="border-b border-dotted border-black flex-1">${personal.category}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Aadhaar No:</span><span class="border-b border-dotted border-black flex-1">${personal.aadhaar || '-'}</span></div>
+                </div>
+
+                <!-- Table -->
+                <table class="marks-table w-full border-collapse border border-black mb-8">
+                    <thead>
                         <tr>
-                            <td class="text-left-align font-semibold">${sub.name}</td>
-                            <td>${sub.fa1}</td>
-                            <td>${sub.fa2}</td>
-                            <td>${sub.fa3}</td>
-                            <td class="bg-gray-50 font-semibold">${faTotal}</td>
-                            <td>${sub.sa1}</td>
-                            <td>${sub.sa2}</td>
-                            <td class="font-bold text-blue-800">${subjectTotal}</td>
-                            <td class="font-bold">${getGrade(subjectTotal)}</td>
+                            <th rowspan="2" class="w-1/4 text-left-align border border-black p-2">SUBJECTS</th>
+                            <th colspan="4" class="border border-black p-2">FORMATIVE ASSESSMENT (FA)</th>
+                            <th colspan="2" class="border border-black p-2">SUMMATIVE (SA)</th>
+                            <th rowspan="2" class="border border-black p-2">GRAND TOTAL<br>(100)</th>
+                            <th rowspan="2" class="border border-black p-2">GRADE</th>
                         </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
-            }
+                        <tr>
+                            <th class="border border-black p-1">FA1</th>
+                            <th class="border border-black p-1">FA2</th>
+                            <th class="border border-black p-1">FA3</th>
+                            <th class="border border-black p-1">Total</th>
+                            <th class="border border-black p-1">SA1</th>
+                            <th class="border border-black p-1">SA2</th>
+                        </tr>
+                    </thead>
+                    <tbody>${marksRows}</tbody>
+                    <tfoot>
+                        <tr class="bg-gray-100 font-bold">
+                            <td class="text-left-align border border-black p-2">OVERALL RESULT</td>
+                            <td colspan="6" class="border border-black"></td>
+                            <td class="border border-black p-2">${grandSum}</td>
+                            <td class="border border-black p-2">${overallGrade}</td>
+                        </tr>
+                    </tfoot>
+                </table>
 
-            // 3. Calculate Overall Result
-            const averageScore = totalSubjects > 0 ? (grandSum / totalSubjects) : 0;
-            document.getElementById('grandTotal').innerText = grandSum;
-            document.getElementById('grandGrade').innerText = getGrade(averageScore);
+                <!-- Remarks -->
+                <div class="mt-8 border border-black p-4 h-24">
+                    <span class="font-bold">Class Teacher's Remarks:</span>
+                    <p class="italic mt-2 text-gray-700">Promoted to next class with excellent performance.</p>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-4 text-xs text-gray-500 flex justify-between">
+                    <span>A+: 91-100</span><span>A: 81-90</span><span>B+: 71-80</span>
+                    <span>B: 61-70</span><span>C+: 51-60</span><span>C: 41-50</span>
+                    <span>D: 33-40</span><span>E: Below 33</span>
+                </div>
+
+                <!-- Signatures -->
+                <div class="signature-grid mt-16">
+                    <div><div class="h-12"></div><div class="sign-line">Class Teacher</div></div>
+                    <div><div class="h-12"></div><div class="sign-line">Examination In-Charge</div></div>
+                    <div><div class="h-12"></div><div class="sign-line">Headmaster / Principal</div></div>
+                </div>
+                
+                <div class="text-center text-xs mt-10 text-gray-400">
+                    Generated on ${new Date().toLocaleDateString()} | System Ver 4.0
+                </div>
+            </div>`;
         }
 
         function printCard() {
-            const cardVisible = !document.getElementById('marksCard').classList.contains('hidden');
-            if(cardVisible) {
-                window.print();
-            } else {
-                alert("Please search for a student first.");
+            const container = document.getElementById('cardsContainer');
+            // If the welcome screen is not hidden, we shouldn't print
+            if (document.getElementById('welcomeScreen') && !document.getElementById('welcomeScreen').classList.contains('hidden')) {
+                 alert("Please search for a student first.");
+                 return;
             }
+            if(container.innerHTML.trim() === "") {
+                alert("Please search for a student first.");
+                return;
+            }
+            window.print();
         }
-        
-        // Initialize
-        // Removed simple updatePlaceholder, now handled by updateSearchOptions inside loadDatabase
-        // Load Data immediately
-        loadDatabase();
-
     </script>
 </body>
 </html>

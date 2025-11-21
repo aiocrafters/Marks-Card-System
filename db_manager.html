@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student DB Manager - Advanced</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>body { font-family: sans-serif; }</style>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col">
+
+    <div class="bg-white shadow-sm z-10 px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-gray-800"><i class="fas fa-database text-indigo-600 mr-2"></i>Student DB Manager</h1>
+        <div class="flex gap-2">
+            <button onclick="openStudentModal()" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">
+                <i class="fas fa-plus mr-1"></i> New Student
+            </button>
+            <button onclick="downloadJSON()" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700">
+                <i class="fas fa-download mr-1"></i> Save DB
+            </button>
+        </div>
+    </div>
+
+    <div class="flex-1 overflow-auto p-6">
+        <div class="max-w-7xl mx-auto bg-white rounded-lg shadow">
+             <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Adm No</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Parentage</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sessions</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="mainTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- STUDENT MODAL (Personal Details) -->
+    <div id="studentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b flex justify-between">
+                <h3 class="text-lg font-bold" id="studentModalTitle">Student Details</h3>
+                <button onclick="closeStudentModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-6">
+                <!-- Personal Form -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <input type="hidden" id="studentId">
+                    <div><label class="text-xs font-bold text-gray-500">Adm No</label><input id="admNo" class="w-full border rounded p-2"></div>
+                    <div><label class="text-xs font-bold text-gray-500">Name</label><input id="name" class="w-full border rounded p-2"></div>
+                    <div><label class="text-xs font-bold text-gray-500">Aadhaar</label><input id="aadhaar" class="w-full border rounded p-2"></div>
+                    <div><label class="text-xs font-bold text-gray-500">Father</label><input id="father" class="w-full border rounded p-2"></div>
+                    <div><label class="text-xs font-bold text-gray-500">Mother</label><input id="mother" class="w-full border rounded p-2"></div>
+                    <div><label class="text-xs font-bold text-gray-500">Contact</label><input id="contact" class="w-full border rounded p-2"></div>
+                    <div><label class="text-xs font-bold text-gray-500">DOB</label><input type="date" id="dob" class="w-full border rounded p-2"></div>
+                    <div><label class="text-xs font-bold text-gray-500">Gender</label><select id="gender" class="w-full border rounded p-2"><option>Male</option><option>Female</option></select></div>
+                    <div><label class="text-xs font-bold text-gray-500">Category</label><input id="category" class="w-full border rounded p-2"></div>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-bold text-gray-700">Academic History (Sessions)</h4>
+                        <button onclick="openSessionForm()" class="text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200">
+                            <i class="fas fa-plus mr-1"></i> Add Session
+                        </button>
+                    </div>
+                    <!-- Sessions List inside Modal -->
+                    <div id="sessionsList" class="space-y-2"></div>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 flex justify-end">
+                <button onclick="saveStudent()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Save Student</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SESSION FORM (Nested or Overlay) -->
+    <div id="sessionFormOverlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden z-[60] flex items-center justify-center">
+        <div class="bg-white rounded w-full max-w-2xl p-6 shadow-2xl">
+            <h3 class="font-bold text-lg mb-4">Edit Session Data</h3>
+            <input type="hidden" id="sess_index">
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="text-xs font-bold">Session Year</label>
+                    <select id="sess_year" class="w-full border rounded p-2">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div><label class="text-xs font-bold">Class</label><input id="sess_class" class="w-full border rounded p-2"></div>
+                <div><label class="text-xs font-bold">Roll No</label><input id="sess_roll" class="w-full border rounded p-2"></div>
+            </div>
+
+            <div id="sess_marks" class="space-y-2 mb-4 max-h-60 overflow-y-auto"></div>
+
+            <div class="flex justify-end gap-2">
+                <button onclick="closeSessionForm()" class="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+                <button onclick="saveSessionData()" class="bg-indigo-600 text-white px-4 py-2 rounded">Save Session</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let db = { supported_sessions: [], students: [] };
+        let currentStudentIndex = -1;
+        let tempSessions = []; // Temp store sessions while editing student
+
+        const defaultSubjects = ["English", "Mathematics", "Urdu", "Kashmiri", "Science"];
+
+        window.onload = async () => {
+            try {
+                const res = await fetch('students_db.json');
+                db = await res.json();
+                renderMainTable();
+            } catch(e) { console.error("Load failed", e); alert("Run on local server!"); }
+        };
+
+        function renderMainTable() {
+            const tbody = document.getElementById('mainTableBody');
+            tbody.innerHTML = db.students.map((s, idx) => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 text-sm font-medium">${s.admNo}</td>
+                    <td class="px-6 py-4 text-sm font-bold">${s.name}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">F: ${s.father}</td>
+                    <td class="px-6 py-4 text-sm">
+                        ${s.sessions.map(sess => `<span class="bg-gray-100 px-2 py-1 rounded text-xs mr-1">${sess.session} (${sess.class})</span>`).join('')}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="openStudentModal(${idx})" class="text-indigo-600 hover:text-indigo-900 mr-2"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteStudent(${idx})" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // --- STUDENT MODAL ---
+        function openStudentModal(index = -1) {
+            currentStudentIndex = index;
+            document.getElementById('studentModal').classList.remove('hidden');
+            
+            if (index === -1) {
+                // New Student
+                document.getElementById('studentId').value = crypto.randomUUID();
+                document.querySelectorAll('#studentModal input:not([type=hidden])').forEach(i => i.value = '');
+                tempSessions = [];
+            } else {
+                // Edit Student
+                const s = db.students[index];
+                document.getElementById('studentId').value = s.studentId;
+                document.getElementById('admNo').value = s.admNo;
+                document.getElementById('name').value = s.name;
+                document.getElementById('father').value = s.father;
+                document.getElementById('mother').value = s.mother;
+                document.getElementById('aadhaar').value = s.aadhaar || '';
+                document.getElementById('contact').value = s.contact;
+                document.getElementById('dob').value = s.dob;
+                document.getElementById('gender').value = s.gender;
+                document.getElementById('category').value = s.category;
+                tempSessions = JSON.parse(JSON.stringify(s.sessions)); // Deep copy
+            }
+            renderSessionsList();
+        }
+
+        function closeStudentModal() {
+            document.getElementById('studentModal').classList.add('hidden');
+        }
+
+        function renderSessionsList() {
+            const list = document.getElementById('sessionsList');
+            list.innerHTML = tempSessions.map((sess, idx) => `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded border">
+                    <div>
+                        <span class="font-bold text-sm text-indigo-700">${sess.session}</span>
+                        <span class="text-sm ml-2">Class: ${sess.class}</span>
+                        <span class="text-sm ml-2">Roll: ${sess.rollNo}</span>
+                        <span class="text-xs text-gray-400 ml-2">(${sess.subjects.length} subjects)</span>
+                    </div>
+                    <div>
+                        <button onclick="openSessionForm(${idx})" class="text-blue-600 mr-2"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteSession(${idx})" class="text-red-600"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteSession(idx) {
+            if(confirm("Delete this session record?")) {
+                tempSessions.splice(idx, 1);
+                renderSessionsList();
+            }
+        }
+
+        // --- SESSION OVERLAY ---
+        function openSessionForm(sessIdx = -1) {
+            document.getElementById('sessionFormOverlay').classList.remove('hidden');
+            document.getElementById('sess_index').value = sessIdx;
+
+            // Populate Year Dropdown
+            const yearSelect = document.getElementById('sess_year');
+            yearSelect.innerHTML = db.supported_sessions.map(y => `<option value="${y}">${y}</option>`).join('');
+
+            let data = {};
+            if(sessIdx === -1) {
+                // New Session default
+                data = { session: db.supported_sessions[db.supported_sessions.length-1], class: '', rollNo: '', subjects: defaultSubjects.map(n => ({name:n, fa1:0, fa2:0, fa3:0, sa1:0, sa2:0})) };
+            } else {
+                data = tempSessions[sessIdx];
+            }
+
+            yearSelect.value = data.session;
+            document.getElementById('sess_class').value = data.class;
+            document.getElementById('sess_roll').value = data.rollNo;
+            renderMarksInputs(data.subjects);
+        }
+
+        function renderMarksInputs(subjects) {
+            const container = document.getElementById('sess_marks');
+            container.innerHTML = `
+                <div class="grid grid-cols-6 gap-1 text-xs font-bold text-center mb-1">
+                    <div class="text-left">Subject</div><div>FA1</div><div>FA2</div><div>FA3</div><div>SA1</div><div>SA2</div>
+                </div>
+            `;
+            subjects.forEach((sub, idx) => {
+                const row = document.createElement('div');
+                row.className = "grid grid-cols-6 gap-1 items-center mb-1";
+                row.innerHTML = `
+                    <input class="border px-1 text-xs font-bold bg-gray-50" value="${sub.name}" readonly>
+                    <input type="number" class="border px-1 text-center" value="${sub.fa1}" data-idx="${idx}" data-field="fa1">
+                    <input type="number" class="border px-1 text-center" value="${sub.fa2}" data-idx="${idx}" data-field="fa2">
+                    <input type="number" class="border px-1 text-center" value="${sub.fa3}" data-idx="${idx}" data-field="fa3">
+                    <input type="number" class="border px-1 text-center" value="${sub.sa1}" data-idx="${idx}" data-field="sa1">
+                    <input type="number" class="border px-1 text-center" value="${sub.sa2}" data-idx="${idx}" data-field="sa2">
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function closeSessionForm() {
+            document.getElementById('sessionFormOverlay').classList.add('hidden');
+        }
+
+        function saveSessionData() {
+            const idx = parseInt(document.getElementById('sess_index').value);
+            const container = document.getElementById('sess_marks');
+            
+            // Reconstruct subjects array
+            const newSubjects = [];
+            const rows = container.querySelectorAll('.grid.grid-cols-6');
+            // Skip header (handled by querySelectorAll logic if careful, but header has diff class structure in my render)
+            // Easier:
+            const nameInputs = container.querySelectorAll('input[readonly]');
+            nameInputs.forEach((input, i) => {
+                const parent = input.parentElement;
+                const vals = parent.querySelectorAll('input[type=number]');
+                newSubjects.push({
+                    name: input.value,
+                    fa1: parseInt(vals[0].value)||0, fa2: parseInt(vals[1].value)||0, fa3: parseInt(vals[2].value)||0,
+                    sa1: parseInt(vals[3].value)||0, sa2: parseInt(vals[4].value)||0
+                });
+            });
+
+            const newSessionObj = {
+                session: document.getElementById('sess_year').value,
+                class: document.getElementById('sess_class').value,
+                rollNo: document.getElementById('sess_roll').value,
+                subjects: newSubjects
+            };
+
+            if (idx === -1) tempSessions.push(newSessionObj);
+            else tempSessions[idx] = newSessionObj;
+
+            closeSessionForm();
+            renderSessionsList();
+        }
+
+        // --- SAVE MAIN STUDENT ---
+        function saveStudent() {
+            const studentObj = {
+                studentId: document.getElementById('studentId').value,
+                admNo: document.getElementById('admNo').value,
+                name: document.getElementById('name').value,
+                father: document.getElementById('father').value,
+                mother: document.getElementById('mother').value,
+                aadhaar: document.getElementById('aadhaar').value,
+                contact: document.getElementById('contact').value,
+                dob: document.getElementById('dob').value,
+                gender: document.getElementById('gender').value,
+                category: document.getElementById('category').value,
+                sessions: tempSessions
+            };
+
+            if(currentStudentIndex === -1) db.students.push(studentObj);
+            else db.students[currentStudentIndex] = studentObj;
+
+            closeStudentModal();
+            renderMainTable();
+        }
+
+        function deleteStudent(idx) {
+            if(confirm("Delete this student and all history?")) {
+                db.students.splice(idx, 1);
+                renderMainTable();
+            }
+        }
+
+        function downloadJSON() {
+            const dataStr = JSON.stringify(db, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "students_db.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
