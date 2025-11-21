@@ -140,7 +140,7 @@
                         <label class="font-bold text-gray-500 ml-1">Search By</label>
                         <select id="searchType" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" onchange="updateSearchOptions()">
                             <option value="admNo">Admission No</option>
-                            <option value="studentId">Student ID</option> <!-- Added -->
+                            <option value="studentId">Student ID</option>
                             <option value="rollNo">Roll No</option>
                             <option value="name">Name</option>
                         </select>
@@ -269,9 +269,6 @@
                 // Determine if student is relevant based on filters
                 let isRelevant = false;
 
-                // If searching by Personal ID (Adm, Name, ID), we generally want to see them
-                // regardless of session, UNLESS class filter is strict.
-                
                 // Check if they have ANY session that matches current filters
                 const matchingSessions = student.sessions.filter(s => {
                     const sessionMatch = (sessionFilter === "All") || (s.session === sessionFilter);
@@ -340,7 +337,6 @@
             // 2. Filter Sessions for this student
             let sessionsToShow = student.sessions.filter(sess => {
                 if (sessionFilter !== "All" && sess.session !== sessionFilter) return false;
-                // Add class filtering if needed, though usually searching by ID implies showing that student regardless of class
                 return true; 
             });
 
@@ -429,6 +425,7 @@
                     <div class="flex"><span class="font-bold w-32">Mother's Name:</span><span class="border-b border-dotted border-black flex-1">${personal.mother}</span></div>
                     <div class="flex"><span class="font-bold w-32">Category:</span><span class="border-b border-dotted border-black flex-1">${personal.category}</span></div>
                     <div class="flex"><span class="font-bold w-32">Aadhaar No:</span><span class="border-b border-dotted border-black flex-1">${personal.aadhaar || '-'}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Student ID:</span><span class="border-b border-dotted border-black flex-1 text-xs pt-1 font-mono">${personal.studentId || '-'}</span></div>
                 </div>
 
                 <!-- Table -->
