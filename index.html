@@ -265,7 +265,7 @@
             // 1. Update Placeholder
             if(type === 'admNo') input.placeholder = "Select Admission No...";
             else if(type === 'rollNo') input.placeholder = "Select Roll No...";
-            else if(type === 'studentId') input.placeholder = "Select UUID...";
+            else if(type === 'studentId') input.placeholder = "Select ID...";
             else if(type === 'name') input.placeholder = "Select Student Name...";
 
             // 2. Clear options
@@ -434,7 +434,7 @@
                     <div class="flex"><span class="font-bold w-32">Mother's Name:</span><span class="border-b border-dotted border-black flex-1">${personal.mother}</span></div>
                     <div class="flex"><span class="font-bold w-32">Category:</span><span class="border-b border-dotted border-black flex-1">${personal.category}</span></div>
                     <div class="flex"><span class="font-bold w-32">Aadhaar No:</span><span class="border-b border-dotted border-black flex-1">${personal.aadhaar || '-'}</span></div>
-                    <div class="flex"><span class="font-bold w-32">Student ID:</span><span class="border-b border-dotted border-black flex-1 text-xs pt-1 font-mono">${personal.studentId || '-'}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Student ID:</span><span class="border-b border-dotted border-black flex-1 text-xs pt-1 font-mono tracking-widest font-semibold text-gray-800">${personal.studentId || '-'}</span></div>
                 </div>
 
                 <!-- Table -->
