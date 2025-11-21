@@ -1,14 +1,18 @@
 {
+  "school_name": "KIDS HUB",
+  "school_department": "test",
   "supported_sessions": [
     "2021-2022",
     "2022-2023",
     "2023-2024",
     "2024-2025",
-    "2025-2026"
+    "2025-2026",
+    "2026-2027",
+    "2027-2028"
   ],
   "students": [
     {
-      "studentId": "e5d25362-8191-4ba9-91b4-827524caa3b9",
+      "studentId": "20251122010306889",
       "admNo": "1",
       "name": "Zara Khan",
       "father": "Imran Khan",
@@ -23,6 +27,53 @@
           "session": "2025-2026",
           "class": "LKG",
           "rollNo": "1",
+          "subjects": [
+            {
+              "name": "English",
+              "fa1": 30,
+              "fa2": 30,
+              "fa3": 30,
+              "sa1": 5,
+              "sa2": 5
+            },
+            {
+              "name": "Mathematics",
+              "fa1": 30,
+              "fa2": 30,
+              "fa3": 30,
+              "sa1": 5,
+              "sa2": 5
+            },
+            {
+              "name": "Urdu",
+              "fa1": 30,
+              "fa2": 30,
+              "fa3": 30,
+              "sa1": 5,
+              "sa2": 5
+            },
+            {
+              "name": "Kashmiri",
+              "fa1": 30,
+              "fa2": 30,
+              "fa3": 30,
+              "sa1": 5,
+              "sa2": 5
+            },
+            {
+              "name": "Science",
+              "fa1": 30,
+              "fa2": 30,
+              "fa3": 30,
+              "sa1": 5,
+              "sa2": 5
+            }
+          ]
+        },
+        {
+          "session": "2026-2027",
+          "class": "UKG",
+          "rollNo": "4",
           "subjects": [
             {
               "name": "English",

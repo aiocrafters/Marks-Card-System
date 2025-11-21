@@ -34,11 +34,27 @@
     <!-- Main Content -->
     <div class="flex-1 overflow-auto p-6">
         <div class="max-w-7xl mx-auto bg-white rounded-lg shadow">
+            
+            <!-- Global Settings Card (Updated) -->
+            <div class="p-6 bg-indigo-50 border-b">
+                <h2 class="font-bold text-gray-700 mb-4"><i class="fas fa-school mr-2"></i>School & Global Settings</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">SCHOOL NAME</label>
+                        <input id="schoolName" class="w-full border rounded p-2 mt-1" placeholder="e.g. Government High School" onchange="saveToLocal()">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500">Address</label>
+                        <input id="schoolDept" class="w-full border rounded p-2 mt-1" placeholder="e.g. Residency Road, Srinagar" onchange="saveToLocal()">
+                    </div>
+                </div>
+            </div>
+
              <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Adm No</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th> <!-- Added Header -->
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Parentage</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sessions</th>
@@ -69,7 +85,7 @@
                         <input id="admNo" class="w-full border rounded p-2">
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-gray-500">Student ID (UUID)</label>
+                        <label class="text-xs font-bold text-gray-500">Student ID (Timestamp)</label>
                         <input id="studentId" class="w-full border rounded p-2 bg-gray-100 text-gray-600 font-mono text-xs" readonly>
                     </div>
                     <div>
@@ -183,7 +199,12 @@
         const defaultSubjects = ["English", "Mathematics", "Urdu", "Kashmiri", "Science"];
 
         // --- STATE ---
-        let db = { supported_sessions: ["2023-2024", "2024-2025"], students: [] };
+        let db = { 
+            school_name: "Government High School",
+            school_department: "Address Line Here",
+            supported_sessions: ["2023-2024", "2024-2025"], 
+            students: [] 
+        };
         let currentStudentIndex = -1;
         let tempSessions = []; 
 
@@ -192,11 +213,20 @@
             await initializeApp();
         };
 
+        // NEW: Helper to generate Timestamp-Based ID
+        function generateTimestampId() {
+            const now = new Date();
+            const pad = (n, s=2) => String(n).padStart(s, '0');
+            // Format: YYYYMMDDHHMMSSmmm (17 digits)
+            return `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds(), 3)}`;
+        }
+
         async function initializeApp() {
             const cachedData = localStorage.getItem(STORAGE_KEY);
             if (cachedData) {
                 console.log("Loaded from Local Cache");
                 db = JSON.parse(cachedData);
+                populateGlobalSettings(); 
                 renderMainTable();
             } else {
                 console.log("Loading from JSON file...");
@@ -209,6 +239,7 @@
                 const res = await fetch('students_db.json');
                 if(!res.ok) throw new Error("File not found");
                 db = await res.json();
+                populateGlobalSettings();
                 saveToLocal();
                 renderMainTable();
             } catch(e) { 
@@ -218,10 +249,18 @@
         }
 
         function saveToLocal() {
+            db.school_name = document.getElementById('schoolName').value;
+            db.school_department = document.getElementById('schoolDept').value;
+            
             localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
             const badge = document.getElementById('saveStatus');
             badge.classList.remove('hidden');
             setTimeout(() => badge.classList.add('hidden'), 2000);
+        }
+
+        function populateGlobalSettings() {
+            document.getElementById('schoolName').value = db.school_name || "Government High School";
+            document.getElementById('schoolDept').value = db.school_department || "Address Line Here";
         }
 
         // --- CORE ACTIONS ---
@@ -259,7 +298,7 @@
             tbody.innerHTML = db.students.map((s, idx) => `
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">${s.admNo}</td>
-                    <td class="px-6 py-4 text-xs font-mono text-gray-500 select-all">${s.studentId}</td> <!-- Added ID Column -->
+                    <td class="px-6 py-4 text-xs font-mono text-gray-500 select-all">${s.studentId}</td>
                     <td class="px-6 py-4 text-sm font-bold text-gray-800">${s.name}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">F: ${s.father}</td>
                     <td class="px-6 py-4 text-sm">
@@ -280,18 +319,20 @@
             document.getElementById('studentModal').classList.remove('hidden');
             
             if (index === -1) {
-                // New Student
-                document.getElementById('studentId').value = crypto.randomUUID();
+                // New Student: Generate Timestamp ID
+                document.getElementById('studentId').value = generateTimestampId();
                 // Clear other fields
-                const inputs = document.querySelectorAll('#studentModal input:not([readonly])'); // Don't clear readonly ID
+                const inputs = document.querySelectorAll('#studentModal input:not([readonly])'); 
                 inputs.forEach(i => i.value = '');
                 // Reset selects
                 document.getElementById('gender').selectedIndex = 0;
+                document.getElementById('category').selectedIndex = 0;
                 tempSessions = [];
             } else {
                 // Edit Student
                 const s = db.students[index];
-                document.getElementById('studentId').value = s.studentId || crypto.randomUUID(); // Ensure ID exists
+                // Fallback to timestamp ID if ID is missing (rare case for old data)
+                document.getElementById('studentId').value = s.studentId || generateTimestampId();
                 document.getElementById('admNo').value = s.admNo;
                 document.getElementById('name').value = s.name;
                 document.getElementById('father').value = s.father;
@@ -300,7 +341,7 @@
                 document.getElementById('contact').value = s.contact;
                 document.getElementById('dob').value = s.dob;
                 document.getElementById('gender').value = s.gender;
-                document.getElementById('category').value = s.category;
+                document.getElementById('category').value = s.category || "General / Open";
                 tempSessions = JSON.parse(JSON.stringify(s.sessions));
             }
             renderSessionsList();
@@ -370,8 +411,7 @@
 
             let data = {};
             if(sessIdx === -1) {
-                // Default subjects for new session
-                data = { session: supported[supported.length-1], class: '', rollNo: '', subjects: defaultSubjects.map(n => ({name:n, fa1:0, fa2:0, fa3:0, sa1:0, sa2:0})) };
+                data = { session: supported[supported.length-1], class: 'LKG', rollNo: '', subjects: defaultSubjects.map(n => ({name:n, fa1:0, fa2:0, fa3:0, sa1:0, sa2:0})) };
             } else {
                 data = tempSessions[sessIdx];
             }
@@ -382,14 +422,12 @@
             renderMarksInputs(data.subjects);
         }
 
-        // Renders the list of subject rows (Editable)
         function renderMarksInputs(subjects) {
             const container = document.getElementById('sess_marks');
-            container.innerHTML = ''; // Clear current
+            container.innerHTML = ''; 
             subjects.forEach(sub => addSubjectRowUI(sub));
         }
 
-        // Helper to append a single row
         function addSubjectRowUI(sub = {name:'', fa1:0, fa2:0, fa3:0, sa1:0, sa2:0}) {
             const container = document.getElementById('sess_marks');
             const row = document.createElement('div');
@@ -410,9 +448,8 @@
             container.appendChild(row);
         }
 
-        // Triggered by the "+ Add Subject" button
         function addSubjectRow() {
-            addSubjectRowUI(); // Adds empty row
+            addSubjectRowUI();
         }
 
         function saveSessionData() {
@@ -424,7 +461,6 @@
             rows.forEach(row => {
                 const inputs = row.querySelectorAll('input');
                 const name = inputs[0].value.trim();
-                // Only save rows where subject name is not empty
                 if(name) {
                     newSubjects.push({
                         name: name,
@@ -457,6 +493,9 @@
 
         // --- DOWNLOAD ---
         function downloadJSON() {
+            db.school_name = document.getElementById('schoolName').value;
+            db.school_department = document.getElementById('schoolDept').value;
+
             const dataStr = JSON.stringify(db, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);

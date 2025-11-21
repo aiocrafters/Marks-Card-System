@@ -195,6 +195,10 @@
         // --- 1. STATE & LOAD ---
         let resultRegister = [];
         let supportedSessions = [];
+        let schoolInfo = {
+            name: "Government High School",
+            address: "Department of School Education • Kashmir"
+        };
 
         window.onload = loadDatabase;
 
@@ -212,6 +216,11 @@
                 } else {
                     resultRegister = data.students || [];
                     supportedSessions = data.supported_sessions || ["2023-2024", "2024-2025"];
+                    
+                    // Load School Info if available
+                    if(data.school_name) schoolInfo.name = data.school_name;
+                    // NOTE: JSON key is school_department, mapped to address
+                    if(data.school_department) schoolInfo.address = data.school_department;
                 }
 
                 // Populate Session Dropdown
@@ -408,8 +417,8 @@
             <div class="paper-sheet">
                 <!-- Header -->
                 <div class="text-center border-b-2 border-black pb-4 mb-6">
-                    <h1 class="text-3xl font-bold uppercase tracking-wider mb-1">Government High School</h1>
-                    <p class="text-sm font-semibold text-gray-600">Department of School Education • Kashmir</p>
+                    <h1 class="text-3xl font-bold uppercase tracking-wider mb-1">${schoolInfo.name}</h1>
+                    <p class="text-sm font-semibold text-gray-600">${schoolInfo.address}</p>
                     <h2 class="text-xl font-bold mt-4 border-2 border-black inline-block px-6 py-1 rounded-full">MARKS CARD / RESULT SHEET</h2>
                     <p class="mt-2">Academic Session: <span class="font-bold">${session.session}</span></p>
                 </div>
