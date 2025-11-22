@@ -276,7 +276,7 @@
                     if (sess.subjects) {
                         sess.subjects.forEach(sub => {
                             grandTotal += (sub.fa1||0) + (sub.fa2||0) + (sub.fa3||0) + (sub.sa1||0) + (sub.sa2||0);
-                            maxMarks += (sub.max || 100); // Use stored max or default 100
+                            maxMarks += (sub.max || 100);
                         });
                     }
                     const percentage = maxMarks > 0 ? (grandTotal / maxMarks) * 100 : 0;
@@ -388,7 +388,6 @@
             (d.subjects || []).forEach(sub => addSubjectRowUI(sub));
         }
 
-        // UPDATED: Added Max Marks Input in Row
         function addSubjectRowUI(sub = {name:'', max:100, fa1:'', fa2:'', fa3:'', sa1:'', sa2:''}) {
             const d = document.createElement('div');
             d.className = "grid grid-cols-12 gap-1 items-center mb-1 subject-row";
@@ -406,7 +405,6 @@
         }
         function addSubjectRow() { addSubjectRowUI(); }
 
-        // UPDATED: Save Max Marks
         function saveSessionData() {
             const idx = parseInt(document.getElementById('sess_index').value);
             const subjects = [];
@@ -414,7 +412,7 @@
                 const i = r.querySelectorAll('input');
                 if(i[0].value) subjects.push({
                     name: i[0].value, 
-                    max: Number(i[1].value)||100, // CAPTURE MAX MARKS
+                    max: Number(i[1].value)||100, 
                     fa1: Number(i[2].value)||0, fa2: Number(i[3].value)||0, fa3: Number(i[4].value)||0,
                     sa1: Number(i[5].value)||0, sa2: Number(i[6].value)||0
                 });
@@ -426,10 +424,22 @@
                 section: document.getElementById('sess_section').value,
                 rollNo: document.getElementById('sess_roll').value,
                 remarks: document.getElementById('sess_remarks').value,
-                attendance: { present: document.getElementById('att_present').value, working: document.getElementById('att_working').value },
-                co_scholastic: { arts: document.getElementById('co_arts').value, pe: document.getElementById('co_pe').value, values: document.getElementById('co_values').value },
-                personal_social: { emotion: document.getElementById('ps_emotion').value },
-                reflections: { student_goals: document.getElementById('ref_student').value, parent_feedback: document.getElementById('ref_parent').value },
+                attendance: {
+                    present: document.getElementById('att_present').value,
+                    working: document.getElementById('att_working').value
+                },
+                co_scholastic: {
+                    arts: document.getElementById('co_arts').value,
+                    pe: document.getElementById('co_pe').value,
+                    values: document.getElementById('co_values').value
+                },
+                personal_social: {
+                    emotion: document.getElementById('ps_emotion').value
+                },
+                reflections: {
+                    student_goals: document.getElementById('ref_student').value,
+                    parent_feedback: document.getElementById('ref_parent').value
+                },
                 nep_peer_assess: document.getElementById('ref_peer').value,
                 subjects: subjects
             };
