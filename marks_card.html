@@ -485,9 +485,10 @@
                     </tfoot>
                 </table>
 
+                <!-- Remarks (Dynamic) -->
                 <div class="mt-8 border border-black p-4 h-20">
                     <span class="font-bold">Class Teacher's Remarks:</span>
-                    <p class="italic mt-2 text-gray-700">Promoted to next class with excellent performance.</p>
+                    <p class="italic mt-2 text-gray-700">${session.remarks || "Promoted to next class."}</p>
                 </div>
 
                 <div class="mt-4 text-xs text-gray-500 flex justify-between">
