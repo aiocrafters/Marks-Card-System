@@ -10,122 +10,261 @@
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
         body { font-family: 'Roboto', sans-serif; }
         .card-hover:hover { transform: translateY(-5px); }
+        .stat-card { transition: all 0.3s ease; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
     <!-- Navbar -->
-    <nav class="bg-white border-b shadow-sm">
+    <nav class="bg-white border-b shadow-sm z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center gap-2">
                     <i class="fas fa-graduation-cap text-indigo-600 text-2xl"></i>
                     <span class="font-bold text-xl text-gray-800">School Result System</span>
                 </div>
-                <div class="flex items-center">
-                    <span class="text-sm text-gray-500">Version 4.0</span>
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-medium text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full" id="navSessionBadge">Session: Loading...</span>
+                    <button onclick="downloadBackup()" class="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1" title="Download JSON Backup">
+                        <i class="fas fa-download"></i> Backup
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to the Result Portal</h1>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                Manage student records, academic history, and generate printable marks cards from a single centralized system.
-            </p>
+        <!-- Header Section -->
+        <div class="mb-10">
+            <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <p class="text-gray-500 mt-1">Overview of student performance and academic records.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            
+        <!-- MAIN MODULES -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             <!-- Module 1: Marks Card Generator -->
-            <a href="marks_card.html" class="card-hover transition duration-300 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden group">
-                <div class="p-8 flex flex-col items-center text-center h-full">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition duration-300">
-                        <i class="fas fa-print text-3xl"></i>
+            <a href="marks_card.html" class="card-hover block bg-white rounded-xl shadow-sm border border-gray-200 p-6 group hover:border-blue-300 hover:shadow-md transition">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i class="fas fa-print text-xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-800">Generate Marks Cards</h2>
+                        <p class="text-gray-500 text-sm mt-2 leading-relaxed">
+                            Search students, view history, and print A4 marks cards individually or in bulk for entire classes.
+                        </p>
                     </div>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-3">Generate Marks Cards</h2>
-                    <p class="text-gray-500 mb-6">
-                        Search for students, view their academic history across different sessions, and print official A4 marks cards in bulk.
-                    </p>
-                    <span class="mt-auto text-blue-600 font-semibold group-hover:underline">
-                        Open Generator <i class="fas fa-arrow-right ml-2"></i>
-                    </span>
+                    <div class="text-gray-300 group-hover:text-blue-500 transition">
+                        <i class="fas fa-arrow-right text-xl"></i>
+                    </div>
                 </div>
             </a>
 
             <!-- Module 2: Database Manager -->
-            <a href="db_manager.html" class="card-hover transition duration-300 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden group">
-                <div class="p-8 flex flex-col items-center text-center h-full">
-                    <div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-6 group-hover:bg-green-600 group-hover:text-white transition duration-300">
-                        <i class="fas fa-database text-3xl"></i>
+            <a href="db_manager.html" class="card-hover block bg-white rounded-xl shadow-sm border border-gray-200 p-6 group hover:border-green-300 hover:shadow-md transition">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-600 group-hover:text-white transition">
+                            <i class="fas fa-database text-xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-800">Manage Database</h2>
+                        <p class="text-gray-500 text-sm mt-2 leading-relaxed">
+                            Add students, update personal details, manage academic sessions, and configure school settings.
+                        </p>
                     </div>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-3">Manage Database</h2>
-                    <p class="text-gray-500 mb-6">
-                        Add new students, update personal details, manage academic sessions, enter marks, and configure school settings.
-                    </p>
-                    <span class="mt-auto text-green-600 font-semibold group-hover:underline">
-                        Open Manager <i class="fas fa-arrow-right ml-2"></i>
-                    </span>
+                    <div class="text-gray-300 group-hover:text-green-500 transition">
+                        <i class="fas fa-arrow-right text-xl"></i>
+                    </div>
                 </div>
             </a>
-
         </div>
 
-        <!-- Quick Info Section -->
-        <div class="mt-16 bg-white rounded-lg shadow-sm border p-6 max-w-4xl mx-auto">
-            <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-                <i class="fas fa-info-circle text-gray-400 mr-2"></i> System Status
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
-                <div>
-                    <p class="font-semibold text-gray-900">Data Source:</p>
-                    <p>students_db.json</p>
+        <!-- ANALYTICS DASHBOARD -->
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-chart-pie text-indigo-500 mr-2"></i> Analytics (Current Session)
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Stat 1: Total Students -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Enrolled</p>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span class="text-4xl font-bold text-gray-900" id="totalCount">0</span>
+                    <span class="text-sm text-gray-500">students</span>
                 </div>
-                <div>
-                    <p class="font-semibold text-gray-900">Current Session:</p>
-                    <p id="currentSessionDisplay">Loading...</p>
-                </div>
-                <div>
-                    <p class="font-semibold text-gray-900">Total Students:</p>
-                    <p id="studentCountDisplay">Loading...</p>
+                <div class="mt-4 text-xs text-gray-400">
+                    Across all classes for this session
                 </div>
             </div>
+
+            <!-- Stat 2: Class Distribution -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Class Distribution</p>
+                <div id="classDistList" class="space-y-2 max-h-40 overflow-y-auto pr-2">
+                    <div class="text-sm text-gray-400 italic">Loading data...</div>
+                </div>
+            </div>
+
+            <!-- Stat 3: Gender Ratio -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">Gender Ratio</p>
+                
+                <!-- Male Bar -->
+                <div class="mb-3">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="font-medium text-blue-600">Boys</span>
+                        <span id="maleCount" class="text-gray-600">0</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                        <div id="maleBar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Female Bar -->
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="font-medium text-pink-600">Girls</span>
+                        <span id="femaleCount" class="text-gray-600">0</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                        <div id="femaleBar" class="bg-pink-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </main>
 
     <footer class="bg-white border-t mt-auto">
         <div class="max-w-7xl mx-auto px-4 py-6 text-center text-gray-400 text-sm">
-            &copy; 2025 School Result Management System. All rights reserved.
+            &copy; 2025 School Result Management System.
         </div>
     </footer>
 
     <script>
-        // Simple script to fetch stats from JSON to show on dashboard
+        let dbData = null;
+
         window.onload = async () => {
+            await fetchStats();
+        };
+
+        async function fetchStats() {
             try {
                 const response = await fetch('students_db.json');
                 if(response.ok) {
-                    const data = await response.json();
-                    // Display Stats
-                    const count = Array.isArray(data) ? data.length : (data.students ? data.students.length : 0);
-                    const session = Array.isArray(data) ? "2024-2025" : (data.session || "N/A");
-                    
-                    document.getElementById('studentCountDisplay').innerText = count + " Records";
-                    document.getElementById('currentSessionDisplay').innerText = session;
+                    dbData = await response.json();
+                    processAnalytics(dbData);
                 } else {
                     throw new Error("File not found");
                 }
             } catch (e) {
-                document.getElementById('studentCountDisplay').innerText = "Unknown (Run Local Server)";
-                document.getElementById('currentSessionDisplay').innerText = "Unknown";
                 console.warn("Could not load stats:", e);
+                document.getElementById('navSessionBadge').innerText = "Offline / Error";
+                document.getElementById('classDistList').innerHTML = '<span class="text-red-400 text-xs">Error loading data. Please ensure local server is running.</span>';
             }
-        };
+        }
+
+        function processAnalytics(data) {
+            // 1. Determine Current Session
+            // If it's an array (old format), assume 2024-2025. If object, read session key.
+            let currentSession = "2024-2025";
+            let students = [];
+
+            if (Array.isArray(data)) {
+                students = data;
+            } else {
+                currentSession = data.session || "2024-2025";
+                students = data.students || [];
+            }
+
+            // Update UI Badge
+            document.getElementById('navSessionBadge').innerText = `Session: ${currentSession}`;
+
+            // 2. Filter Students Active in this Session
+            let activeStudents = 0;
+            let classCounts = {};
+            let genderCounts = { Male: 0, Female: 0 };
+
+            students.forEach(student => {
+                // Find session record for current academic year
+                const sessionRecord = student.sessions ? student.sessions.find(s => s.session === currentSession) : null;
+
+                if (sessionRecord) {
+                    activeStudents++;
+                    
+                    // Count Class
+                    const cls = sessionRecord.class || "Unknown";
+                    classCounts[cls] = (classCounts[cls] || 0) + 1;
+
+                    // Count Gender (Global attribute)
+                    const gender = student.gender || "Male"; // Default to Male if undefined to avoid crash, or skip
+                    if (gender === "Male") genderCounts.Male++;
+                    else if (gender === "Female") genderCounts.Female++;
+                }
+            });
+
+            // 3. Update Total
+            document.getElementById('totalCount').innerText = activeStudents;
+
+            // 4. Update Class List
+            const classListContainer = document.getElementById('classDistList');
+            classListContainer.innerHTML = ''; // Clear loading
+            
+            if (Object.keys(classCounts).length === 0) {
+                classListContainer.innerHTML = '<div class="text-xs text-gray-400">No students enrolled in this session.</div>';
+            } else {
+                // Sort classes logically if possible, or alphabetically
+                const sortedClasses = Object.keys(classCounts).sort(); 
+                
+                sortedClasses.forEach(cls => {
+                    const count = classCounts[cls];
+                    const percentage = Math.round((count / activeStudents) * 100);
+                    
+                    const row = document.createElement('div');
+                    row.className = "flex items-center justify-between text-sm";
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                            <span class="text-gray-700 font-medium">${cls}</span>
+                        </div>
+                        <span class="text-gray-500 font-mono">${count} <span class="text-xs text-gray-300">(${percentage}%)</span></span>
+                    `;
+                    classListContainer.appendChild(row);
+                });
+            }
+
+            // 5. Update Gender Bars
+            const totalGender = genderCounts.Male + genderCounts.Female;
+            const malePct = totalGender > 0 ? (genderCounts.Male / totalGender) * 100 : 0;
+            const femalePct = totalGender > 0 ? (genderCounts.Female / totalGender) * 100 : 0;
+
+            document.getElementById('maleCount').innerText = genderCounts.Male;
+            document.getElementById('femaleCount').innerText = genderCounts.Female;
+            
+            document.getElementById('maleBar').style.width = `${malePct}%`;
+            document.getElementById('femaleBar').style.width = `${femalePct}%`;
+        }
+
+        // Helper Function to backup directly from dashboard
+        function downloadBackup() {
+            if(!dbData) {
+                alert("Data not loaded yet.");
+                return;
+            }
+            const dataStr = JSON.stringify(dbData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "students_db_backup.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
     </script>
 </body>
 </html>
