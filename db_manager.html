@@ -144,31 +144,31 @@
                 <div><label class="text-xs font-bold text-gray-600">Attendance</label><div class="flex gap-1"><input id="att_present" placeholder="Pres" class="w-1/2 border rounded p-2 text-center text-sm" type="number"><input id="att_working" placeholder="Total" class="w-1/2 border rounded p-2 text-center text-sm" type="number"></div></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="border rounded p-3 bg-gray-50 shadow-sm">
-                    <h4 class="font-bold text-gray-700 text-xs uppercase mb-2 border-b pb-1">Part A: Scholastic (Marks)</h4>
-                    <div class="grid grid-cols-12 gap-1 text-[10px] font-bold text-center mb-1 text-gray-500">
-                        <div class="col-span-4 text-left pl-1">Subject</div>
-                        <div class="col-span-1 text-indigo-700">Max</div> <div class="col-span-1">FA1</div><div class="col-span-1">FA2</div><div class="col-span-1">FA3</div>
-                        <div class="col-span-1">SA1</div><div class="col-span-1">SA2</div>
-                        <div class="col-span-1"></div>
-                    </div>
-                    <div id="sess_marks" class="space-y-1 max-h-48 overflow-y-auto custom-scroll p-1"></div>
-                    <button onclick="addSubjectRow()" class="mt-2 text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center"><i class="fas fa-plus-circle mr-1"></i> Add Subject</button>
+            <div class="border rounded p-3 bg-gray-50 shadow-sm mb-4">
+                <h4 class="font-bold text-gray-700 text-xs uppercase mb-2 border-b pb-1">Part A: Scholastic (Marks)</h4>
+                <div class="grid grid-cols-12 gap-1 text-[10px] font-bold text-center mb-1 text-gray-500">
+                    <div class="col-span-4 text-left pl-1">Subject</div>
+                    <div class="col-span-1 text-indigo-700">Max</div> 
+                    <div class="col-span-1">FA1</div><div class="col-span-1">FA2</div><div class="col-span-1">FA3</div>
+                    <div class="col-span-1">SA1</div><div class="col-span-1">SA2</div>
+                    <div class="col-span-1"></div>
                 </div>
+                <div id="sess_marks" class="space-y-1 max-h-60 overflow-y-auto custom-scroll p-1"></div> <button onclick="addSubjectRow()" class="mt-2 text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center"><i class="fas fa-plus-circle mr-1"></i> Add Subject</button>
+            </div>
 
-                <div class="border rounded p-3 bg-green-50 border-green-200 shadow-sm">
-                    <h4 class="font-bold text-green-800 text-xs uppercase mb-2 border-b border-green-200 pb-1">Part B & C: Holistic Areas</h4>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div><label class="text-[10px] font-bold text-green-700 uppercase">Arts Education</label><select id="co_arts" class="w-full border p-1 text-sm rounded bg-white"><option value="Participated">Participated</option><option value="Excellent">Excellent</option><option value="Proficient">Proficient</option><option value="Developing">Developing</option></select></div>
-                        <div><label class="text-[10px] font-bold text-green-700 uppercase">Health & PE</label><select id="co_pe" class="w-full border p-1 text-sm rounded bg-white"><option value="Participated">Participated</option><option value="Athletic">Athletic/Active</option><option value="Developing">Developing</option></select></div>
-                    </div>
-                    <div class="mb-3"><label class="text-[10px] font-bold text-green-700 uppercase">Life Skills / Values</label><input id="co_values" class="w-full border p-1 text-sm rounded" placeholder="e.g. Honest, Helpful"></div>
-                     <div class="mb-3"><label class="text-[10px] font-bold text-green-700 uppercase">Socio-Emotional</label><input id="ps_emotion" class="w-full border p-1 text-sm rounded" placeholder="e.g. Shows leadership"></div>
+            <div class="border rounded p-3 bg-green-50 border-green-200 shadow-sm mb-4">
+                <h4 class="font-bold text-green-800 text-xs uppercase mb-2 border-b border-green-200 pb-1">Part B & C: Holistic Areas</h4>
+                <div class="grid grid-cols-2 gap-4 mb-3">
+                    <div><label class="text-[10px] font-bold text-green-700 uppercase">Arts Education</label><select id="co_arts" class="w-full border p-1 text-sm rounded bg-white"><option value="Participated">Participated</option><option value="Excellent">Excellent</option><option value="Proficient">Proficient</option><option value="Developing">Developing</option></select></div>
+                    <div><label class="text-[10px] font-bold text-green-700 uppercase">Health & PE</label><select id="co_pe" class="w-full border p-1 text-sm rounded bg-white"><option value="Participated">Participated</option><option value="Athletic">Athletic/Active</option><option value="Developing">Developing</option></select></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-[10px] font-bold text-green-700 uppercase">Life Skills / Values</label><input id="co_values" class="w-full border p-1 text-sm rounded" placeholder="e.g. Honest, Helpful"></div>
+                    <div><label class="text-[10px] font-bold text-green-700 uppercase">Socio-Emotional</label><input id="ps_emotion" class="w-full border p-1 text-sm rounded" placeholder="e.g. Shows leadership"></div>
                 </div>
             </div>
 
-            <div class="mt-4 border rounded p-3 bg-yellow-50 border-yellow-200 shadow-sm">
+            <div class="border rounded p-3 bg-yellow-50 border-yellow-200 shadow-sm">
                 <h4 class="font-bold text-yellow-800 text-xs uppercase mb-2 border-b border-yellow-200 pb-1">Part D: 360° Feedback & Reflections</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><label class="text-xs font-bold text-yellow-700">Student Self-Reflection</label><textarea id="ref_student" class="w-full border rounded p-2 text-sm h-16" placeholder="What did I learn?"></textarea></div>

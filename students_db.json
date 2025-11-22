@@ -593,16 +593,16 @@
         {
           "session": "2024-2025",
           "class": "10th",
-          "section": "",
+          "section": "A",
           "rollNo": "1",
           "remarks": "",
           "attendance": {
-            "present": "",
-            "working": ""
+            "present": "30",
+            "working": "35"
           },
           "co_scholastic": {
-            "arts": "Participated",
-            "pe": "Participated",
+            "arts": "Excellent",
+            "pe": "Athletic",
             "values": ""
           },
           "personal_social": {
