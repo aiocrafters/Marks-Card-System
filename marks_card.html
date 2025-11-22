@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Holistic Progress Card Generator (NEP 2020)</title>
+    <title>NEP Holistic Progress Card</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -14,7 +14,7 @@
             font-family: 'Roboto', sans-serif;
         }
 
-        /* Paper effect for the card */
+        /* --- PAPER SHEET (V1 Style) --- */
         .paper-sheet {
             background: white;
             width: 210mm;
@@ -28,7 +28,7 @@
             color: #1e293b;
         }
 
-        /* Table Styling */
+        /* --- TABLE STYLING (Hybrid) --- */
         .marks-table {
             width: 100%;
             border-collapse: collapse;
@@ -37,7 +37,7 @@
         }
         .marks-table th, .marks-table td {
             border: 1px solid #334155;
-            padding: 4px;
+            padding: 5px;
             text-align: center;
         }
         .marks-table th {
@@ -45,17 +45,18 @@
             font-weight: bold;
             text-transform: uppercase;
             font-size: 10px;
+            color: #334155;
         }
         .text-left-align {
             text-align: left !important;
             padding-left: 8px !important;
         }
 
-        /* NEP Specific Styles */
+        /* --- NEP SECTIONS (V2 Style) --- */
         .section-header {
             background-color: #1e293b;
             color: white;
-            padding: 3px 10px;
+            padding: 4px 10px;
             font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
@@ -72,9 +73,9 @@
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 2px 20px;
+            gap: 4px 20px;
             font-size: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
         .nep-box {
@@ -83,6 +84,8 @@
             border-radius: 4px;
             background: #f8fafc;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         .nep-label {
             font-size: 10px;
@@ -95,39 +98,43 @@
             padding-bottom: 2px;
         }
         .nep-content {
-            font-size: 12px;
+            font-size: 11px;
             line-height: 1.4;
+            font-style: italic;
+            flex-grow: 1;
         }
 
-        /* Proficiency Badges */
+        /* --- PROFICIENCY BADGES (V2) --- */
         .badge {
             padding: 2px 6px;
             border-radius: 10px;
             font-size: 9px;
             font-weight: bold;
             display: inline-block;
+            border: 1px solid rgba(0,0,0,0.1);
         }
-        .bg-begin { background-color: #fee2e2; color: #991b1b; } /* Red */
-        .bg-dev { background-color: #fef3c7; color: #92400e; }   /* Yellow */
-        .bg-prof { background-color: #d1fae5; color: #065f46; }  /* Green */
-        .bg-exem { background-color: #dbeafe; color: #1e40af; }  /* Blue */
+        .bg-begin { background-color: #fee2e2; color: #991b1b; } 
+        .bg-dev { background-color: #fef3c7; color: #92400e; }   
+        .bg-prof { background-color: #d1fae5; color: #065f46; }  
+        .bg-exem { background-color: #dbeafe; color: #1e40af; }  
 
-        /* Signature area */
+        /* --- SIGNATURES --- */
         .signature-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            margin-top: 25px; 
+            margin-top: 30px; 
             text-align: center;
             gap: 20px;
         }
         .sign-line {
             border-top: 1px solid #000;
-            margin: 0 10px;
+            margin: 0 15px;
             padding-top: 5px;
             font-weight: bold;
             font-size: 11px;
         }
 
+        /* --- PRINT SETTINGS --- */
         @media print {
             @page { margin: 0; size: A4; }
             body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -135,9 +142,12 @@
             #cardsContainer { display: block !important; margin: 0; }
             .paper-sheet {
                 box-shadow: none; margin: 0; width: 100%; 
-                min-height: 297mm; padding: 10mm 15mm; border: none;
+                height: 296mm; /* A4 Height slightly reduced to prevent overflow */
+                padding: 10mm 15mm; border: none;
                 break-after: page; page-break-after: always;
             }
+            .section-header { background-color: #1e293b !important; color: white !important; }
+            .nep-box { background-color: #f8fafc !important; }
         }
     </style>
 </head>
@@ -146,46 +156,69 @@
     <div class="no-print bg-white border-b shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col gap-4">
+                
                 <div class="flex justify-between items-center">
                     <div class="flex items-center gap-2">
                         <i class="fas fa-file-contract text-indigo-600 text-2xl"></i>
-                        <h1 class="text-xl font-bold text-gray-800">NEP 2020 HPC Generator</h1>
+                        <h1 class="text-xl font-bold text-gray-800">NEP HPC Generator</h1>
                     </div>
-                    <a href="db_manager.html" class="bg-indigo-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-indigo-700 transition flex items-center text-sm font-medium">
+                    <a href="index.html" class="bg-indigo-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-indigo-700 transition flex items-center text-sm font-medium">
                         <i class="fas fa-database mr-2"></i> Manage DB
                     </a>
                 </div>
+
                 <div class="flex justify-center">
                     <div class="flex flex-wrap w-full md:w-auto gap-2 items-center bg-gray-50 p-2 rounded-lg border">
+                        
                         <div class="flex flex-col text-xs">
                             <label class="font-bold text-gray-500 ml-1">Session</label>
                             <select id="sessionFilter" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"></select>
                         </div>
+
                         <div class="flex flex-col text-xs">
                             <label class="font-bold text-gray-500 ml-1">Class</label>
                             <select id="classFilter" onchange="updateSearchOptions()" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
                                 <option value="All">All Classes</option>
-                                <optgroup label="Foundational"><option value="LKG">LKG</option><option value="UKG">UKG</option><option value="1st">1st</option><option value="2nd">2nd</option></optgroup>
-                                <optgroup label="Preparatory"><option value="3rd">3rd</option><option value="4th">4th</option><option value="5th">5th</option></optgroup>
-                                <optgroup label="Middle"><option value="6th">6th</option><option value="7th">7th</option><option value="8th">8th</option></optgroup>
-                                <optgroup label="Secondary"><option value="9th">9th</option><option value="10th">10th</option></optgroup>
+                                <optgroup label="Foundational">
+                                    <option value="LKG">LKG</option><option value="UKG">UKG</option>
+                                    <option value="1st">1st</option><option value="2nd">2nd</option>
+                                </optgroup>
+                                <optgroup label="Preparatory">
+                                    <option value="3rd">3rd</option><option value="4th">4th</option><option value="5th">5th</option>
+                                </optgroup>
+                                <optgroup label="Middle">
+                                    <option value="6th">6th</option><option value="7th">7th</option><option value="8th">8th</option>
+                                </optgroup>
+                                <optgroup label="Secondary">
+                                    <option value="9th">9th</option><option value="10th">10th</option>
+                                </optgroup>
                             </select>
                         </div>
+
                         <div class="flex flex-col text-xs">
                             <label class="font-bold text-gray-500 ml-1">Search By</label>
                             <select id="searchType" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" onchange="updateSearchOptions()">
                                 <option value="admNo">Admission No</option>
                                 <option value="studentId">Student ID</option>
+                                <option value="rollNo">Roll No</option>
                                 <option value="name">Name</option>
                             </select>
                         </div>
+
                         <div class="flex flex-col text-xs flex-1 min-w-[200px]">
                             <label class="font-bold text-gray-500 ml-1">Value</label>
-                            <input type="text" id="searchInput" list="dynamicOptions" placeholder="Select or Type..." class="w-full border rounded-md px-4 py-2 focus:outline-none" onkeypress="handleEnter(event)" onfocus="updateSearchOptions()">
+                            <input type="text" id="searchInput" list="dynamicOptions" placeholder="Select or Type..." 
+                                   class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   onkeypress="handleEnter(event)" onfocus="updateSearchOptions()">
                             <datalist id="dynamicOptions"></datalist>
                         </div>
-                        <button onclick="searchStudent()" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition shadow-sm font-medium"><i class="fas fa-search mr-1"></i> Find</button>
-                        <button onclick="printCard()" class="mt-4 bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition shadow-sm font-medium"><i class="fas fa-print mr-1"></i> Print</button>
+
+                        <button onclick="searchStudent()" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition shadow-sm font-medium">
+                            <i class="fas fa-search mr-1"></i> Find
+                        </button>
+                        <button onclick="printCard()" class="mt-4 bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition shadow-sm font-medium">
+                            <i class="fas fa-print mr-1"></i> Print
+                        </button>
                     </div>
                 </div>
             </div>
@@ -197,28 +230,39 @@
         <div id="cardsContainer" class="w-full flex flex-col items-center gap-8 print:block">
             <div id="welcomeScreen" class="text-center mt-20 text-gray-500">
                 <i class="fas fa-shapes text-6xl mb-4 text-gray-300"></i>
-                <h2 class="text-2xl font-bold">NEP Holistic Progress Card</h2>
-                <p class="mt-2">Search to generate 360-degree reports.</p>
+                <h2 class="text-2xl font-bold">Holistic Progress Card</h2>
+                <p class="mt-2">NEP 2020 Compliant • 360° Assessment</p>
             </div>
         </div>
     </div>
 
     <script>
-        // --- LOGIC ---
+        // --- STATE ---
         let resultRegister = [];
         let supportedSessions = [];
-        let schoolInfo = { name: "Government High School", address: "Kashmir" };
+        let schoolInfo = { name: "Government High School", address: "Department of School Education" };
 
         window.onload = loadDatabase;
 
         async function loadDatabase() {
+            const statusMsg = document.getElementById('statusMsg');
             try {
-                const response = await fetch('students_db.json');
-                if (!response.ok) throw new Error();
-                const data = await response.json();
+                const response = await fetch('students_db_nep.json'); // Prioritize NEP DB, fallback to standard
+                // NOTE: If using the filename from the previous step, ensure it matches. 
+                // I will try to fetch students_db.json if nep fails in logic below implies universality.
                 
-                if (Array.isArray(data)) resultRegister = data;
-                else {
+                let data;
+                if (response.ok) {
+                     data = await response.json();
+                } else {
+                     const res2 = await fetch('students_db.json');
+                     if(!res2.ok) throw new Error("No DB file found");
+                     data = await res2.json();
+                }
+
+                if (Array.isArray(data)) {
+                    resultRegister = data;
+                } else {
                     resultRegister = data.students || [];
                     supportedSessions = data.supported_sessions || ["2023-2024", "2024-2025"];
                     if(data.school_name) schoolInfo.name = data.school_name;
@@ -233,14 +277,29 @@
                     sessionSelect.appendChild(opt);
                 });
                 sessionSelect.value = "All";
-                document.getElementById('statusMsg').innerText = "Database loaded.";
+                
+                statusMsg.innerText = "Database loaded successfully.";
+                statusMsg.classList.remove('text-red-500');
+                statusMsg.classList.add('text-green-600');
                 updateSearchOptions();
             } catch (error) {
-                document.getElementById('statusMsg').innerText = "Error: Run on Local Server.";
+                statusMsg.innerText = "Error: Could not load 'students_db.json'. Ensure local server is running.";
             }
         }
 
+        // --- SEARCH & FILTER LOGIC (Restored V1 Sorting) ---
+        
         function handleEnter(e) { if(e.key === 'Enter') searchStudent(); }
+
+        // Sort Helper from V1
+        function getClassWeight(cls) {
+            const mapping = {
+                "10th": 14, "9th": 13, "8th": 12, "7th": 11, "6th": 10,
+                "5th": 9, "4th": 8, "3rd": 7, "2nd": 6, "1st": 5,
+                "UKG": 4, "LKG": 3, "Nursery": 2
+            };
+            return mapping[cls] || 0;
+        }
 
         function updateSearchOptions() {
             const input = document.getElementById('searchInput');
@@ -253,10 +312,14 @@
             resultRegister.forEach(s => {
                 if(searchType === 'name') options.push(s.name);
                 else if(searchType === 'studentId') options.push(s.studentId);
+                else if(searchType === 'rollNo') {
+                    s.sessions.forEach(sess => options.push(sess.rollNo));
+                }
                 else options.push(s.admNo);
             });
 
-            [...new Set(options)].slice(0, 50).forEach(val => {
+            // Unique and limit to 50 suggestions for performance
+            [...new Set(options)].slice(0, 50).sort().forEach(val => {
                 if(!val) return;
                 const opt = document.createElement('option');
                 opt.value = val;
@@ -267,14 +330,14 @@
         function searchStudent() {
             const container = document.getElementById('cardsContainer');
             const welcome = document.getElementById('welcomeScreen');
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const type = document.getElementById('searchType').value;
             const sessionFilter = document.getElementById('sessionFilter').value;
             const classFilter = document.getElementById('classFilter').value;
 
             container.innerHTML = '';
             let matches = [];
-            
+
             resultRegister.forEach(student => {
                 student.sessions.forEach(sess => {
                     let isMatch = true;
@@ -287,8 +350,10 @@
                     if(isMatch && query) {
                         let qMatch = false;
                         if(type === 'name' && student.name.toLowerCase().includes(query)) qMatch = true;
-                        if(type === 'admNo' && student.admNo.includes(query)) qMatch = true;
-                        if(type === 'studentId' && (student.studentId || '').includes(query)) qMatch = true;
+                        else if(type === 'admNo' && student.admNo.toLowerCase().includes(query)) qMatch = true;
+                        else if(type === 'studentId' && (student.studentId || '').includes(query)) qMatch = true;
+                        else if(type === 'rollNo' && sess.rollNo == query) qMatch = true;
+                        
                         if(!qMatch) isMatch = false;
                     }
 
@@ -299,21 +364,31 @@
             });
 
             if(matches.length === 0) {
+                document.getElementById('statusMsg').innerText = "No records found.";
+                document.getElementById('statusMsg').classList.add('text-red-500');
                 container.appendChild(welcome);
+                welcome.classList.remove('hidden');
                 return;
             }
-            welcome.classList.add('hidden');
-            
-            // Sort by class then roll no
-            matches.sort((a,b) => (a.session.rollNo || 0) - (b.session.rollNo || 0));
 
-            // Generate cards
+            welcome.classList.add('hidden');
+            document.getElementById('statusMsg').innerText = `Found ${matches.length} record(s).`;
+
+            // SORTING (Restored V1 Logic: Class High->Low, then Roll No)
+            matches.sort((a, b) => {
+                const wA = getClassWeight(a.session.class);
+                const wB = getClassWeight(b.session.class);
+                if (wA !== wB) return wB - wA;
+                return (parseInt(a.session.rollNo)||0) - (parseInt(b.session.rollNo)||0);
+            });
+
             matches.forEach(m => {
                 container.insertAdjacentHTML('beforeend', generateNEPCard(m.personal, m.session));
             });
         }
 
-        // --- NEP HELPERS ---
+        // --- GENERATOR FUNCTIONS (V2 Core + V1 Grading) ---
+
         function getNEPLevel(percentage) {
             if(percentage >= 85) return { label: "EXEMPLARY", class: "bg-exem" };
             if(percentage >= 65) return { label: "PROFICIENT", class: "bg-prof" };
@@ -321,72 +396,99 @@
             return { label: "BEGINNING", class: "bg-begin" };
         }
 
+        function getStandardGrade(percentage) {
+            if (percentage >= 91) return 'A+';
+            if (percentage >= 81) return 'A';
+            if (percentage >= 71) return 'B+';
+            if (percentage >= 61) return 'B';
+            if (percentage >= 51) return 'C+';
+            if (percentage >= 41) return 'C';
+            if (percentage >= 33) return 'D';
+            return 'E';
+        }
+
         function generateNEPCard(p, s) {
-            // -- Calculations --
-            let grandSum = 0, count = 0;
+            // 1. Calculate Marks
+            let grandSum = 0, count = 0, maxMarks = 0;
+            
             const marksRows = (s.subjects || []).map(sub => {
                 const total = (sub.fa1||0)+(sub.fa2||0)+(sub.fa3||0)+(sub.sa1||0)+(sub.sa2||0);
-                grandSum += total; count++;
-                const level = getNEPLevel(total); 
+                grandSum += total; 
+                count++; 
+                maxMarks += 100;
+                
+                const level = getNEPLevel(total);
+                const stdGrade = getStandardGrade(total); // V1 Feature
+                
                 return `<tr>
-                    <td class="text-left-align font-semibold">${sub.name}</td>
+                    <td class="text-left-align font-semibold text-gray-700">${sub.name}</td>
                     <td>${sub.fa1||'-'}</td><td>${sub.fa2||'-'}</td><td>${sub.fa3||'-'}</td>
                     <td>${sub.sa1||'-'}</td><td>${sub.sa2||'-'}</td>
-                    <td class="font-bold">${total}</td>
+                    <td class="font-bold text-gray-800">${total}</td>
+                    <td class="font-bold text-indigo-700">${stdGrade}</td>
                     <td><span class="badge ${level.class}">${level.label}</span></td>
                 </tr>`;
             }).join('');
             
-            const overallPct = count ? (grandSum / (count*100))*100 : 0;
+            const overallPct = count ? (grandSum / maxMarks)*100 : 0;
             const overallLevel = getNEPLevel(overallPct);
+            const overallGrade = getStandardGrade(overallPct);
 
-            // -- Fallbacks for new fields --
-            const att = s.attendance || { working: '-', present: '-' };
-            const attPct = (att.working > 0 && att.present !== '-') ? Math.round((att.present/att.working)*100) + '%' : '-';
+            // 2. Handle Data Fallbacks (V2 Data Structure)
+            const att = s.attendance || { working: 0, present: 0 };
+            const attPct = (att.working > 0) ? Math.round((att.present/att.working)*100) + '%' : '-';
             
             const co = s.co_scholastic || {};
             const ps = s.personal_social || {};
             const reflect = s.reflections || {};
 
-            // Determine Stage
+            // 3. Determine Stage Label
             const cls = s.class;
             let stage = "Preparatory";
-            if(["Nursery","LKG","UKG","1st","2nd"].includes(cls)) stage = "Foundational";
-            else if(["3rd","4th","5th"].includes(cls)) stage = "Preparatory";
-            else if(["6th","7th","8th"].includes(cls)) stage = "Middle";
-            else stage = "Secondary";
+            const w = getClassWeight(cls);
+            if(w <= 4) stage = "Foundational"; // Nur-UKG
+            else if(w <= 6) stage = "Foundational"; // 1st-2nd (NEP 5+3+3+4)
+            else if(w <= 9) stage = "Preparatory"; // 3rd-5th
+            else if(w <= 12) stage = "Middle"; // 6th-8th
+            else stage = "Secondary"; // 9th-10th
 
+            // 4. Render
             return `
             <div class="paper-sheet">
                 <div class="text-center border-b-2 border-black pb-2 mb-4 relative">
-                    <h1 class="text-2xl font-bold uppercase tracking-wider text-gray-900">${schoolInfo.name}</h1>
-                    <p class="text-xs font-semibold text-gray-600 uppercase">${schoolInfo.address}</p>
-                    <div class="mt-2 inline-block border border-black px-4 py-1 text-sm font-bold bg-gray-100 rounded-full">
-                        HOLISTIC PROGRESS CARD (HPC)
+                    <h1 class="text-2xl font-bold uppercase tracking-wider text-gray-900 font-serif">${schoolInfo.name}</h1>
+                    <p class="text-xs font-semibold text-gray-600 uppercase tracking-widest">${schoolInfo.address}</p>
+                    
+                    <div class="mt-3 flex justify-center items-center gap-3">
+                        <div class="border-2 border-black px-6 py-1 rounded-full text-sm font-bold bg-gray-100 uppercase tracking-wide shadow-sm">
+                            Holistic Progress Card
+                        </div>
                     </div>
-                    <div class="absolute right-0 bottom-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest border px-1 rounded">${stage} Stage</div>
+                    <div class="absolute right-0 bottom-1 text-[10px] font-bold text-indigo-900 uppercase tracking-widest border border-indigo-200 px-2 py-0.5 rounded bg-indigo-50">
+                        ${stage} Stage
+                    </div>
                 </div>
 
-                <div class="info-grid">
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">Student Name:</span><span class="border-b border-dotted border-gray-400 flex-1 font-bold text-lg">${p.name}</span></div>
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">Admission No:</span><span class="border-b border-dotted border-gray-400 flex-1 font-mono">${p.admNo}</span></div>
+                <div class="info-grid border-b border-gray-200 pb-2">
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">Student Name:</span><span class="border-b border-dotted border-gray-400 flex-1 font-bold text-lg">${p.name}</span></div>
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">Admission No:</span><span class="border-b border-dotted border-gray-400 flex-1 font-mono font-semibold">${p.admNo}</span></div>
                     
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">Student ID:</span><span class="border-b border-dotted border-gray-400 flex-1 font-mono text-xs pt-1">${p.studentId || '-'}</span></div>
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">Class / Sec:</span><span class="border-b border-dotted border-gray-400 flex-1 font-bold">${s.class} ${s.section ? ' / '+s.section : ''}</span></div>
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">Class / Sec:</span><span class="border-b border-dotted border-gray-400 flex-1 font-semibold">${s.class} ${s.section ? ' / '+s.section : ''}</span></div>
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">Roll No:</span><span class="border-b border-dotted border-gray-400 flex-1 font-semibold">${s.rollNo}</span></div>
+
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">D.O.B:</span><span class="border-b border-dotted border-gray-400 flex-1">${p.dob}</span></div>
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">Student ID:</span><span class="border-b border-dotted border-gray-400 flex-1 font-mono text-xs pt-1">${p.studentId || '-'}</span></div>
                     
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">Roll No:</span><span class="border-b border-dotted border-gray-400 flex-1 font-bold">${s.rollNo}</span></div>
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">D.O.B:</span><span class="border-b border-dotted border-gray-400 flex-1">${p.dob}</span></div>
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">Father's Name:</span><span class="border-b border-dotted border-gray-400 flex-1">${p.father}</span></div>
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">Mother's Name:</span><span class="border-b border-dotted border-gray-400 flex-1">${p.mother || '-'}</span></div>
                     
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">Father's Name:</span><span class="border-b border-dotted border-gray-400 flex-1">${p.father}</span></div>
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">Mother's Name:</span><span class="border-b border-dotted border-gray-400 flex-1">${p.mother || '-'}</span></div>
-                    
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">Session:</span><span class="border-b border-dotted border-gray-400 flex-1">${s.session}</span></div>
-                    <div class="flex"><span class="font-bold w-24 text-gray-600">Attendance:</span><span class="border-b border-dotted border-gray-400 flex-1">${att.present} / ${att.working} (${attPct})</span></div>
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">Session:</span><span class="border-b border-dotted border-gray-400 flex-1 font-semibold text-indigo-900">${s.session}</span></div>
+                    <div class="flex"><span class="font-bold w-28 text-gray-600">Attendance:</span><span class="border-b border-dotted border-gray-400 flex-1">${att.present} / ${att.working} <span class="text-xs text-gray-500">(${attPct})</span></span></div>
                 </div>
 
                 <div class="section-header">
                     <span>Part A: Scholastic Assessment</span>
-                    <span class="text-[9px] normal-case opacity-80">Based on Learning Outcomes</span>
+                    <span class="text-[9px] normal-case opacity-80 tracking-wide">Evaluation of Learning Outcomes</span>
                 </div>
                 <table class="marks-table">
                     <thead>
@@ -395,7 +497,8 @@
                             <th colspan="3">Formative (FA)</th>
                             <th colspan="2">Summative (SA)</th>
                             <th rowspan="2" class="w-12">Total<br>(100)</th>
-                            <th rowspan="2" class="w-24">Competency<br>Level</th>
+                            <th rowspan="2" class="w-12">Grade</th>
+                            <th rowspan="2" class="w-24">Proficiency<br>Level</th>
                         </tr>
                         <tr>
                             <th>FA1</th><th>FA2</th><th>FA3</th><th>SA1</th><th>SA2</th>
@@ -404,85 +507,93 @@
                     <tbody>${marksRows}</tbody>
                     <tfoot>
                         <tr class="bg-gray-50 font-bold">
-                            <td class="text-left-align">Overall Result</td>
-                            <td colspan="5" class="text-right pr-2">Total:</td>
-                            <td>${grandSum}</td>
+                            <td class="text-left-align">GRAND TOTAL</td>
+                            <td colspan="5" class="text-right pr-2 text-gray-400 text-[10px]">AGGREGATE:</td>
+                            <td class="text-base">${grandSum}</td>
+                            <td class="text-base text-indigo-800">${overallGrade}</td>
                             <td><span class="badge ${overallLevel.class}">${overallLevel.label}</span></td>
                         </tr>
                     </tfoot>
                 </table>
 
                 <div class="section-header">Part B: Co-Scholastic & Skills</div>
-                <div class="grid grid-cols-3 gap-2 mb-2">
+                <div class="grid grid-cols-3 gap-3 mb-3">
                     <div class="nep-box">
-                        <span class="nep-label"><i class="fas fa-palette mr-1"></i> Arts / Craft</span>
-                        <div class="text-sm font-bold text-center mt-2">${co.arts || 'Participated'}</div>
+                        <span class="nep-label"><i class="fas fa-palette mr-1"></i> Arts / Education</span>
+                        <div class="nep-content flex items-center justify-center font-bold text-gray-700 text-sm">${co.arts || 'Participated'}</div>
                     </div>
                     <div class="nep-box">
-                        <span class="nep-label"><i class="fas fa-running mr-1"></i> PE / Health</span>
-                        <div class="text-sm font-bold text-center mt-2">${co.pe || 'Participated'}</div>
+                        <span class="nep-label"><i class="fas fa-running mr-1"></i> Health & PE</span>
+                        <div class="nep-content flex items-center justify-center font-bold text-gray-700 text-sm">${co.pe || 'Participated'}</div>
                     </div>
                     <div class="nep-box">
                         <span class="nep-label"><i class="fas fa-brain mr-1"></i> Life Skills</span>
-                        <div class="text-sm font-bold text-center mt-2">${co.life_skills || 'Developing'}</div>
+                        <div class="nep-content flex items-center justify-center font-bold text-gray-700 text-sm">${co.values || 'Developing'}</div>
                     </div>
                 </div>
 
                 <div class="section-header">Part C: Personal & Social Development</div>
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <div class="nep-box">
-                        <span class="nep-label">Values & Conduct</span>
-                        <p class="nep-content italic">${co.values || 'Displays good values.'}</p>
-                    </div>
+                <div class="grid grid-cols-2 gap-3 mb-3">
                     <div class="nep-box">
                         <span class="nep-label">Socio-Emotional Growth</span>
-                        <p class="nep-content italic">${ps.emotion || 'Emotionally stable and happy.'}</p>
+                        <p class="nep-content">"${ps.emotion || 'Shows emotional stability.'}"</p>
+                    </div>
+                     <div class="nep-box">
+                        <span class="nep-label">Discipline & Conduct</span>
+                        <p class="nep-content">"Maintains good discipline and respects school rules."</p>
                     </div>
                 </div>
 
-                <div class="section-header">Part D: Reflections & Feedback</div>
-                <div class="grid grid-cols-2 gap-2 mb-4">
+                <div class="section-header">Part D: 360° Reflections & Feedback</div>
+                <div class="grid grid-cols-2 gap-3 mb-4">
                     <div class="nep-box bg-white">
-                        <span class="nep-label text-indigo-700">Student Self-Reflection</span>
-                        <p class="nep-content">"${reflect.student_goals || s.nep_self_assess || 'I have learned a lot this year.'}"</p>
+                        <span class="nep-label text-indigo-700"><i class="fas fa-user mr-1"></i> Student Self-Reflection</span>
+                        <p class="nep-content">"${reflect.student_goals || s.nep_self_assess || 'I have improved in my studies.'}"</p>
                     </div>
                     <div class="nep-box bg-white">
-                        <span class="nep-label text-indigo-700">Teacher's Remarks</span>
-                        <div class="text-[11px]">
-                            <strong>Strengths:</strong> ${s.remarks || 'Diligent student.'}<br>
-                            ${s.teacher_improvements ? '<strong>Needs Focus:</strong> '+s.teacher_improvements : ''}
+                        <span class="nep-label text-indigo-700"><i class="fas fa-chalkboard-teacher mr-1"></i> Class Teacher's Remarks</span>
+                        <div class="nep-content">
+                            <div class="font-semibold text-gray-800 mb-1">${s.remarks || 'Promoted to next class.'}</div>
                         </div>
                     </div>
                     <div class="nep-box bg-white">
-                        <span class="nep-label text-indigo-700">Peer Feedback</span>
-                        <p class="nep-content">"${s.nep_peer_assess || 'Good team player.'}"</p>
+                        <span class="nep-label text-indigo-700"><i class="fas fa-user-friends mr-1"></i> Peer Feedback</span>
+                        <p class="nep-content">"${s.nep_peer_assess || 'Very helpful to classmates.'}"</p>
                     </div>
                     <div class="nep-box bg-white">
-                        <span class="nep-label text-indigo-700">Parent Feedback</span>
-                        <p class="nep-content">"${reflect.parent_feedback || 'Satisfied with progress.'}"</p>
+                        <span class="nep-label text-indigo-700"><i class="fas fa-home mr-1"></i> Parent Feedback</span>
+                        <p class="nep-content">"${reflect.parent_feedback || 'Satisfied with the school environment.'}"</p>
                     </div>
                 </div>
 
-                <div class="mt-4 pt-2 border-t text-[9px] text-gray-500 flex justify-between">
+                <div class="mt-4 pt-2 border-t border-gray-300 text-[9px] text-gray-500 flex justify-between items-end">
                     <div>
-                        <strong>Proficiency Levels:</strong> 
+                        <strong>Proficiency Key:</strong> 
                         <span class="badge bg-begin ml-1">Beginning (<40%)</span>
                         <span class="badge bg-dev ml-1">Developing (40-64%)</span>
                         <span class="badge bg-prof ml-1">Proficient (65-84%)</span>
                         <span class="badge bg-exem ml-1">Exemplary (85%+)</span>
                     </div>
-                    <div>Generated: ${new Date().toLocaleDateString()}</div>
+                    <div class="text-right">
+                        <div>Generated on: ${new Date().toLocaleDateString()}</div>
+                    </div>
                 </div>
 
                 <div class="signature-grid">
-                    <div><div class="h-8"></div><div class="sign-line">Class Teacher</div></div>
-                    <div><div class="h-8"></div><div class="sign-line">Parent / Guardian</div></div>
-                    <div><div class="h-8"></div><div class="sign-line">Headmaster / Principal</div></div>
+                    <div><div class="h-10"></div><div class="sign-line">Class Teacher</div></div>
+                    <div><div class="h-10"></div><div class="sign-line">Parent / Guardian</div></div>
+                    <div><div class="h-10"></div><div class="sign-line">Headmaster / Principal</div></div>
                 </div>
             </div>`;
         }
 
-        function printCard() { window.print(); }
+        function printCard() {
+            if(document.getElementById('cardsContainer').innerHTML.trim() === "") {
+                alert("Please search for students first.");
+                return;
+            }
+            window.print();
+        }
     </script>
 </body>
 </html>
