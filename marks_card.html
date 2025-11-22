@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Holistic Progress Card Generator</title>
+    <title>Holistic Progress Card Generator (NEP 2020)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -19,146 +19,124 @@
             background: white;
             width: 210mm;
             min-height: 297mm;
-            padding: 15mm;
+            padding: 10mm 15mm;
             margin: 20px auto;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             position: relative;
             font-family: 'Noto Serif', serif;
             border: 1px solid #e5e7eb;
+            color: #1e293b;
         }
 
         /* Table Styling */
         .marks-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 13px;
+            margin-top: 5px;
+            font-size: 11px;
         }
         .marks-table th, .marks-table td {
-            border: 1px solid #333;
-            padding: 6px;
+            border: 1px solid #334155;
+            padding: 4px;
             text-align: center;
         }
         .marks-table th {
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 0.05em;
+            font-size: 10px;
         }
         .text-left-align {
             text-align: left !important;
-            padding-left: 10px !important;
+            padding-left: 8px !important;
         }
 
         /* NEP Specific Styles */
         .section-header {
-            background-color: #0f172a;
+            background-color: #1e293b;
             color: white;
-            padding: 4px 10px;
-            font-size: 12px;
+            padding: 3px 10px;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
-            margin-top: 20px;
-            border-radius: 4px;
-            display: inline-block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            border-radius: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
-        
-        .holistic-grid {
+
+        .info-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px 20px;
+            font-size: 12px;
+            margin-bottom: 10px;
         }
         
-        .holistic-box {
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 10px;
-            background-color: #f8fafc;
+        .nep-box {
+            border: 1px solid #94a3b8;
+            padding: 8px;
+            border-radius: 4px;
+            background: #f8fafc;
+            height: 100%;
         }
-        
-        .holistic-label {
-            font-size: 11px;
+        .nep-label {
+            font-size: 10px;
             font-weight: bold;
             color: #475569;
             text-transform: uppercase;
-            margin-bottom: 4px;
             display: block;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 4px;
+            padding-bottom: 2px;
         }
-        
-        .holistic-content {
-            font-size: 13px;
-            font-style: italic;
-            color: #0f172a;
+        .nep-content {
+            font-size: 12px;
+            line-height: 1.4;
         }
+
+        /* Proficiency Badges */
+        .badge {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .bg-begin { background-color: #fee2e2; color: #991b1b; } /* Red */
+        .bg-dev { background-color: #fef3c7; color: #92400e; }   /* Yellow */
+        .bg-prof { background-color: #d1fae5; color: #065f46; }  /* Green */
+        .bg-exem { background-color: #dbeafe; color: #1e40af; }  /* Blue */
 
         /* Signature area */
         .signature-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            margin-top: 40px; 
+            margin-top: 25px; 
             text-align: center;
             gap: 20px;
         }
         .sign-line {
             border-top: 1px solid #000;
-            margin: 0 20px;
+            margin: 0 10px;
             padding-top: 5px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
         }
 
-        /* Status Messages */
-        #statusMsg {
-            transition: all 0.3s ease;
-        }
-
-        /* Print Specific Styles */
         @media print {
-            @page {
-                margin: 0;
-                size: A4;
-            }
-            body {
-                background: white;
-                margin: 0;
-                padding: 0;
-                -webkit-print-color-adjust: exact; /* Ensure colors print */
-                print-color-adjust: exact;
-            }
-            .no-print {
-                display: none !important;
-            }
-            #cardsContainer {
-                display: block !important;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-            }
+            @page { margin: 0; size: A4; }
+            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            #cardsContainer { display: block !important; margin: 0; }
             .paper-sheet {
-                box-shadow: none;
-                margin: 0;
-                width: 100%;
-                height: 296mm;
-                padding: 10mm 15mm;
-                border: none;
-                break-inside: avoid;
-                break-after: page; 
-                page-break-after: always; 
-            }
-            .paper-sheet:last-of-type {
-                break-after: avoid !important;
-                page-break-after: avoid !important;
-            }
-            /* Force backgrounds for NEP boxes in print */
-            .section-header {
-                background-color: #0f172a !important;
-                color: white !important;
-            }
-            .holistic-box {
-                background-color: #f8fafc !important;
-                border: 1px solid #94a3b8 !important;
+                box-shadow: none; margin: 0; width: 100%; 
+                min-height: 297mm; padding: 10mm 15mm; border: none;
+                break-after: page; page-break-after: always;
             }
         }
     </style>
@@ -168,79 +146,46 @@
     <div class="no-print bg-white border-b shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col gap-4">
-                
                 <div class="flex justify-between items-center">
                     <div class="flex items-center gap-2">
                         <i class="fas fa-file-contract text-indigo-600 text-2xl"></i>
-                        <h1 class="text-xl font-bold text-gray-800">HPC Generator</h1>
+                        <h1 class="text-xl font-bold text-gray-800">NEP 2020 HPC Generator</h1>
                     </div>
                     <a href="db_manager.html" class="bg-indigo-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-indigo-700 transition flex items-center text-sm font-medium">
                         <i class="fas fa-database mr-2"></i> Manage DB
                     </a>
                 </div>
-
                 <div class="flex justify-center">
                     <div class="flex flex-wrap w-full md:w-auto gap-2 items-center bg-gray-50 p-2 rounded-lg border">
-                        
                         <div class="flex flex-col text-xs">
                             <label class="font-bold text-gray-500 ml-1">Session</label>
-                            <select id="sessionFilter" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                                </select>
+                            <select id="sessionFilter" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"></select>
                         </div>
-
                         <div class="flex flex-col text-xs">
                             <label class="font-bold text-gray-500 ml-1">Class</label>
                             <select id="classFilter" onchange="updateSearchOptions()" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
                                 <option value="All">All Classes</option>
-                                <optgroup label="Foundational">
-                                    <option value="LKG">LKG</option>
-                                    <option value="UKG">UKG</option>
-                                    <option value="1st">1st</option>
-                                    <option value="2nd">2nd</option>
-                                </optgroup>
-                                <optgroup label="Preparatory">
-                                    <option value="3rd">3rd</option>
-                                    <option value="4th">4th</option>
-                                    <option value="5th">5th</option>
-                                </optgroup>
-                                <optgroup label="Middle">
-                                    <option value="6th">6th</option>
-                                    <option value="7th">7th</option>
-                                    <option value="8th">8th</option>
-                                </optgroup>
-                                <optgroup label="Secondary">
-                                    <option value="9th">9th</option>
-                                    <option value="10th">10th</option>
-                                </optgroup>
+                                <optgroup label="Foundational"><option value="LKG">LKG</option><option value="UKG">UKG</option><option value="1st">1st</option><option value="2nd">2nd</option></optgroup>
+                                <optgroup label="Preparatory"><option value="3rd">3rd</option><option value="4th">4th</option><option value="5th">5th</option></optgroup>
+                                <optgroup label="Middle"><option value="6th">6th</option><option value="7th">7th</option><option value="8th">8th</option></optgroup>
+                                <optgroup label="Secondary"><option value="9th">9th</option><option value="10th">10th</option></optgroup>
                             </select>
                         </div>
-
                         <div class="flex flex-col text-xs">
                             <label class="font-bold text-gray-500 ml-1">Search By</label>
                             <select id="searchType" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" onchange="updateSearchOptions()">
                                 <option value="admNo">Admission No</option>
                                 <option value="studentId">Student ID</option>
-                                <option value="rollNo">Roll No</option>
                                 <option value="name">Name</option>
                             </select>
                         </div>
-
                         <div class="flex flex-col text-xs flex-1 min-w-[200px]">
                             <label class="font-bold text-gray-500 ml-1">Value</label>
-                            <input type="text" id="searchInput" list="dynamicOptions" placeholder="Select or Type..." 
-                                   class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                   onkeypress="handleEnter(event)" onfocus="updateSearchOptions()">
+                            <input type="text" id="searchInput" list="dynamicOptions" placeholder="Select or Type..." class="w-full border rounded-md px-4 py-2 focus:outline-none" onkeypress="handleEnter(event)" onfocus="updateSearchOptions()">
                             <datalist id="dynamicOptions"></datalist>
                         </div>
-
-                        <button onclick="searchStudent()" 
-                                class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition shadow-sm font-medium">
-                            <i class="fas fa-search mr-1"></i> Find
-                        </button>
-                        <button onclick="printCard()" 
-                                class="mt-4 bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition shadow-sm font-medium">
-                            <i class="fas fa-print mr-1"></i> Print
-                        </button>
+                        <button onclick="searchStudent()" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition shadow-sm font-medium"><i class="fas fa-search mr-1"></i> Find</button>
+                        <button onclick="printCard()" class="mt-4 bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition shadow-sm font-medium"><i class="fas fa-print mr-1"></i> Print</button>
                     </div>
                 </div>
             </div>
@@ -248,390 +193,296 @@
         </div>
     </div>
 
-    <div class="flex justify-center p-4 print:p-0 print:block">
-        <div id="cardsContainer" class="w-full flex flex-col items-center gap-8 print:block print:gap-0">
-            
+    <div class="flex justify-center p-4 print:p-0">
+        <div id="cardsContainer" class="w-full flex flex-col items-center gap-8 print:block">
             <div id="welcomeScreen" class="text-center mt-20 text-gray-500">
                 <i class="fas fa-shapes text-6xl mb-4 text-gray-300"></i>
-                <h2 class="text-2xl font-bold">Holistic Progress Card</h2>
-                <p class="mt-2 max-w-md mx-auto">Search for students to generate 360-degree reports.</p>
-                <div class="mt-6 bg-white p-4 rounded-lg border shadow-sm inline-block text-left text-sm">
-                    <p class="font-bold mb-2">To Print Bulk / Entire Class:</p>
-                    <ul class="list-disc pl-5 space-y-1">
-                        <li>Select <b>Session</b> (e.g., 2024-2025)</li>
-                        <li>Select <b>Class</b> (e.g., 10th)</li>
-                        <li>Leave <b>Value</b> empty</li>
-                        <li>Click <b>Find</b></li>
-                    </ul>
-                </div>
+                <h2 class="text-2xl font-bold">NEP Holistic Progress Card</h2>
+                <p class="mt-2">Search to generate 360-degree reports.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. STATE & LOAD ---
+        // --- LOGIC ---
         let resultRegister = [];
         let supportedSessions = [];
-        let schoolInfo = {
-            name: "Government High School",
-            address: "Department of School Education • Kashmir"
-        };
+        let schoolInfo = { name: "Government High School", address: "Kashmir" };
 
         window.onload = loadDatabase;
 
         async function loadDatabase() {
-            const statusMsg = document.getElementById('statusMsg');
             try {
                 const response = await fetch('students_db.json');
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
+                if (!response.ok) throw new Error();
                 const data = await response.json();
                 
-                if (Array.isArray(data)) {
-                    resultRegister = data;
-                } else {
+                if (Array.isArray(data)) resultRegister = data;
+                else {
                     resultRegister = data.students || [];
                     supportedSessions = data.supported_sessions || ["2023-2024", "2024-2025"];
-                    
                     if(data.school_name) schoolInfo.name = data.school_name;
                     if(data.school_department) schoolInfo.address = data.school_department;
                 }
 
                 const sessionSelect = document.getElementById('sessionFilter');
-                sessionSelect.innerHTML = `<option value="All">All Sessions</option>`; 
-                
+                sessionSelect.innerHTML = `<option value="All">All Sessions</option>`;
                 supportedSessions.forEach(year => {
                     const opt = document.createElement('option');
-                    opt.value = year;
-                    opt.innerText = year;
+                    opt.value = year; opt.innerText = year;
                     sessionSelect.appendChild(opt);
                 });
-                
-                sessionSelect.value = "All"; 
-
-                statusMsg.innerText = "Database loaded successfully.";
-                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-green-600";
-                
+                sessionSelect.value = "All";
+                document.getElementById('statusMsg').innerText = "Database loaded.";
                 updateSearchOptions();
-
             } catch (error) {
-                console.error("Could not load database:", error);
-                statusMsg.innerText = "Error: Run on Local Server to fetch JSON.";
-                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
+                document.getElementById('statusMsg').innerText = "Error: Run on Local Server.";
             }
         }
 
-        // --- 2. SEARCH LOGIC ---
-
-        function handleEnter(e) {
-            if(e.key === 'Enter') searchStudent();
-        }
+        function handleEnter(e) { if(e.key === 'Enter') searchStudent(); }
 
         function updateSearchOptions() {
-            const type = document.getElementById('searchType').value;
-            const classFilter = document.getElementById('classFilter').value;
-            const sessionFilter = document.getElementById('sessionFilter').value;
             const input = document.getElementById('searchInput');
             const datalist = document.getElementById('dynamicOptions');
-
-            if (input.value.trim() === "") {
-                input.placeholder = "Empty = Load All in Class";
-            }
-
+            const searchType = document.getElementById('searchType').value;
+            
             datalist.innerHTML = '';
             let options = [];
-
-            resultRegister.forEach(student => {
-                const matchingSessions = student.sessions.filter(s => {
-                    const sessionMatch = (sessionFilter === "All") || (s.session === sessionFilter);
-                    const classMatch = (classFilter === "All") || (s.class === classFilter);
-                    return sessionMatch && classMatch;
-                });
-
-                if (matchingSessions.length > 0) {
-                    if (type === 'admNo') options.push(student.admNo);
-                    if (type === 'name') options.push(student.name);
-                    if (type === 'studentId') options.push(student.studentId);
-                    if (type === 'rollNo') {
-                        matchingSessions.forEach(ms => options.push(ms.rollNo));
-                    }
-                }
+            
+            resultRegister.forEach(s => {
+                if(searchType === 'name') options.push(s.name);
+                else if(searchType === 'studentId') options.push(s.studentId);
+                else options.push(s.admNo);
             });
 
-            const uniqueOptions = [...new Set(options)].sort();
-            uniqueOptions.forEach(val => {
-                const option = document.createElement('option');
-                option.value = val;
-                datalist.appendChild(option);
+            [...new Set(options)].slice(0, 50).forEach(val => {
+                if(!val) return;
+                const opt = document.createElement('option');
+                opt.value = val;
+                datalist.appendChild(opt);
             });
-        }
-
-        // Helper to determine Sort Weight of a Class
-        function getClassWeight(cls) {
-            const mapping = {
-                "10th": 14, "9th": 13, "8th": 12, "7th": 11, "6th": 10,
-                "5th": 9, "4th": 8, "3rd": 7, "2nd": 6, "1st": 5,
-                "UKG": 4, "LKG": 3, "Nursery": 2, "Pre-Nursery": 1
-            };
-            return mapping[cls] || 0;
-        }
-
-        // Helper to determine NEP Stage
-        function getStageLabel(cls) {
-            const w = getClassWeight(cls);
-            if(w <= 6) return "FOUNDATIONAL STAGE"; // Nursery to 2nd
-            if(w <= 9) return "PREPARATORY STAGE"; // 3rd to 5th
-            if(w <= 12) return "MIDDLE STAGE"; // 6th to 8th
-            return "SECONDARY STAGE"; // 9th to 12th
         }
 
         function searchStudent() {
-            const sessionFilter = document.getElementById('sessionFilter').value;
-            const classFilter = document.getElementById('classFilter').value;
-            const searchType = document.getElementById('searchType').value;
-            const query = document.getElementById('searchInput').value.trim().toLowerCase();
-            
-            const statusMsg = document.getElementById('statusMsg');
             const container = document.getElementById('cardsContainer');
             const welcome = document.getElementById('welcomeScreen');
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const type = document.getElementById('searchType').value;
+            const sessionFilter = document.getElementById('sessionFilter').value;
+            const classFilter = document.getElementById('classFilter').value;
 
             container.innerHTML = '';
-
-            if (resultRegister.length === 0) {
-                statusMsg.innerText = "Database empty/loading...";
-                container.appendChild(welcome);
-                return;
-            }
-
-            if (!query && sessionFilter === "All") {
-                statusMsg.innerText = "Please select a specific Session if loading entire classes.";
-                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
-                container.appendChild(welcome);
-                welcome.classList.remove('hidden');
-                return;
-            }
-
             let matches = [];
-
+            
             resultRegister.forEach(student => {
                 student.sessions.forEach(sess => {
                     let isMatch = true;
 
-                    if (sessionFilter !== "All" && sess.session !== sessionFilter) isMatch = false;
-                    if (isMatch && classFilter !== "All" && sess.class !== classFilter) isMatch = false;
+                    // Filter Logic
+                    if(sessionFilter !== "All" && sess.session !== sessionFilter) isMatch = false;
+                    if(classFilter !== "All" && sess.class !== classFilter) isMatch = false;
 
-                    if (isMatch && query) {
-                        let queryMatch = false;
-                        if (searchType === 'admNo' && student.admNo.toLowerCase() === query) queryMatch = true;
-                        else if (searchType === 'studentId' && student.studentId === query) queryMatch = true;
-                        else if (searchType === 'name' && student.name.toLowerCase().includes(query)) queryMatch = true;
-                        else if (searchType === 'rollNo' && sess.rollNo === query) queryMatch = true;
-                        
-                        if (!queryMatch) isMatch = false;
+                    // Search Logic
+                    if(isMatch && query) {
+                        let qMatch = false;
+                        if(type === 'name' && student.name.toLowerCase().includes(query)) qMatch = true;
+                        if(type === 'admNo' && student.admNo.includes(query)) qMatch = true;
+                        if(type === 'studentId' && (student.studentId || '').includes(query)) qMatch = true;
+                        if(!qMatch) isMatch = false;
                     }
 
-                    if (isMatch) {
-                        matches.push({ personal: student, session: sess });
+                    if(isMatch) {
+                        matches.push({personal: student, session: sess});
                     }
                 });
             });
 
-            if (matches.length === 0) {
-                statusMsg.innerText = "No records found matching filter criteria.";
-                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
+            if(matches.length === 0) {
                 container.appendChild(welcome);
-                welcome.classList.remove('hidden');
                 return;
             }
-
-            // SORTING LOGIC
-            matches.sort((a, b) => {
-                const weightA = getClassWeight(a.session.class);
-                const weightB = getClassWeight(b.session.class);
-
-                if (weightA !== weightB) {
-                    return weightB - weightA; 
-                }
-                return parseInt(a.session.rollNo || 0) - parseInt(b.session.rollNo || 0);
-            });
-
-            statusMsg.innerText = `Found ${matches.length} record(s). Ready to print.`;
-            statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-green-600";
             welcome.classList.add('hidden');
-
-            matches.forEach(match => {
-                const cardHTML = generateCardHTML(match.personal, match.session);
-                container.insertAdjacentHTML('beforeend', cardHTML);
-            });
-        }
-
-        // --- 3. HTML GENERATION ---
-
-        function getGrade(score) {
-            if (score >= 91) return 'A+';
-            if (score >= 81) return 'A';
-            if (score >= 71) return 'B+';
-            if (score >= 61) return 'B';
-            if (score >= 51) return 'C+';
-            if (score >= 41) return 'C';
-            if (score >= 33) return 'D';
-            return 'E';
-        }
-
-        function generateCardHTML(personal, session) {
-            const stage = getStageLabel(session.class);
             
-            // SCHOLASTIC PART
-            const marksRows = (session.subjects || []).map(sub => {
-                const faTotal = (sub.fa1||0) + (sub.fa2||0) + (sub.fa3||0);
-                const subTotal = faTotal + (sub.sa1||0) + (sub.sa2||0);
-                return `
-                    <tr>
-                        <td class="text-left-align font-semibold border border-black p-2">${sub.name}</td>
-                        <td class="border border-black p-2">${sub.fa1||'-'}</td>
-                        <td class="border border-black p-2">${sub.fa2||'-'}</td>
-                        <td class="border border-black p-2">${sub.fa3||'-'}</td>
-                        <td class="bg-gray-50 font-semibold border border-black p-2">${faTotal||'-'}</td>
-                        <td class="border border-black p-2">${sub.sa1||'-'}</td>
-                        <td class="border border-black p-2">${sub.sa2||'-'}</td>
-                        <td class="font-bold text-indigo-800 border border-black p-2">${subTotal}</td>
-                        <td class="font-bold border border-black p-2">${getGrade(subTotal)}</td>
-                    </tr>
-                `;
-            }).join('');
+            // Sort by class then roll no
+            matches.sort((a,b) => (a.session.rollNo || 0) - (b.session.rollNo || 0));
 
-            let grandSum = 0;
-            let count = 0;
-            (session.subjects || []).forEach(sub => {
-                grandSum += (sub.fa1||0) + (sub.fa2||0) + (sub.fa3||0) + (sub.sa1||0) + (sub.sa2||0);
-                count++;
+            // Generate cards
+            matches.forEach(m => {
+                container.insertAdjacentHTML('beforeend', generateNEPCard(m.personal, m.session));
             });
-            const avg = count > 0 ? grandSum/count : 0;
-            const overallGrade = getGrade(avg);
+        }
 
-            // HOLISTIC PART VARIABLES (with fallbacks)
-            const selfAssess = session.nep_self_assess || "Student reflection pending...";
-            const peerAssess = session.nep_peer_assess || "Peer feedback pending...";
-            const project = session.nep_project || "General";
-            const seGrade = session.nep_se_grade || "-";
+        // --- NEP HELPERS ---
+        function getNEPLevel(percentage) {
+            if(percentage >= 85) return { label: "EXEMPLARY", class: "bg-exem" };
+            if(percentage >= 65) return { label: "PROFICIENT", class: "bg-prof" };
+            if(percentage >= 40) return { label: "DEVELOPING", class: "bg-dev" };
+            return { label: "BEGINNING", class: "bg-begin" };
+        }
+
+        function generateNEPCard(p, s) {
+            // -- Calculations --
+            let grandSum = 0, count = 0;
+            const marksRows = (s.subjects || []).map(sub => {
+                const total = (sub.fa1||0)+(sub.fa2||0)+(sub.fa3||0)+(sub.sa1||0)+(sub.sa2||0);
+                grandSum += total; count++;
+                const level = getNEPLevel(total); 
+                return `<tr>
+                    <td class="text-left-align font-semibold">${sub.name}</td>
+                    <td>${sub.fa1||'-'}</td><td>${sub.fa2||'-'}</td><td>${sub.fa3||'-'}</td>
+                    <td>${sub.sa1||'-'}</td><td>${sub.sa2||'-'}</td>
+                    <td class="font-bold">${total}</td>
+                    <td><span class="badge ${level.class}">${level.label}</span></td>
+                </tr>`;
+            }).join('');
+            
+            const overallPct = count ? (grandSum / (count*100))*100 : 0;
+            const overallLevel = getNEPLevel(overallPct);
+
+            // -- Fallbacks for new fields --
+            const att = s.attendance || { working: '-', present: '-' };
+            const attPct = (att.working > 0 && att.present !== '-') ? Math.round((att.present/att.working)*100) + '%' : '-';
+            
+            const co = s.co_scholastic || {};
+            const ps = s.personal_social || {};
+            const reflect = s.reflections || {};
+
+            // Determine Stage
+            const cls = s.class;
+            let stage = "Preparatory";
+            if(["Nursery","LKG","UKG","1st","2nd"].includes(cls)) stage = "Foundational";
+            else if(["3rd","4th","5th"].includes(cls)) stage = "Preparatory";
+            else if(["6th","7th","8th"].includes(cls)) stage = "Middle";
+            else stage = "Secondary";
 
             return `
             <div class="paper-sheet">
-                <div class="text-center border-b-2 border-black pb-4 mb-4 relative">
-                    <h1 class="text-2xl font-bold uppercase tracking-wider mb-1 text-gray-900">${schoolInfo.name}</h1>
-                    <p class="text-xs font-semibold text-gray-600 uppercase tracking-widest">${schoolInfo.address}</p>
+                <div class="text-center border-b-2 border-black pb-2 mb-4 relative">
+                    <h1 class="text-2xl font-bold uppercase tracking-wider text-gray-900">${schoolInfo.name}</h1>
+                    <p class="text-xs font-semibold text-gray-600 uppercase">${schoolInfo.address}</p>
+                    <div class="mt-2 inline-block border border-black px-4 py-1 text-sm font-bold bg-gray-100 rounded-full">
+                        HOLISTIC PROGRESS CARD (HPC)
+                    </div>
+                    <div class="absolute right-0 bottom-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest border px-1 rounded">${stage} Stage</div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">Student Name:</span><span class="border-b border-dotted border-gray-400 flex-1 font-bold text-lg">${p.name}</span></div>
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">Admission No:</span><span class="border-b border-dotted border-gray-400 flex-1 font-mono">${p.admNo}</span></div>
                     
-                    <div class="mt-3 flex justify-center items-center gap-3">
-                        <div class="border-2 border-black px-4 py-1 rounded-full text-lg font-bold bg-gray-100">
-                            HOLISTIC PROGRESS CARD
-                        </div>
-                    </div>
-                    <div class="mt-2 text-xs font-bold text-indigo-700 tracking-[0.2em] uppercase">
-                        ${stage}
-                    </div>
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">Student ID:</span><span class="border-b border-dotted border-gray-400 flex-1 font-mono text-xs pt-1">${p.studentId || '-'}</span></div>
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">Class / Sec:</span><span class="border-b border-dotted border-gray-400 flex-1 font-bold">${s.class} ${s.section ? ' / '+s.section : ''}</span></div>
+                    
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">Roll No:</span><span class="border-b border-dotted border-gray-400 flex-1 font-bold">${s.rollNo}</span></div>
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">D.O.B:</span><span class="border-b border-dotted border-gray-400 flex-1">${p.dob}</span></div>
+                    
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">Father's Name:</span><span class="border-b border-dotted border-gray-400 flex-1">${p.father}</span></div>
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">Mother's Name:</span><span class="border-b border-dotted border-gray-400 flex-1">${p.mother || '-'}</span></div>
+                    
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">Session:</span><span class="border-b border-dotted border-gray-400 flex-1">${s.session}</span></div>
+                    <div class="flex"><span class="font-bold w-24 text-gray-600">Attendance:</span><span class="border-b border-dotted border-gray-400 flex-1">${att.present} / ${att.working} (${attPct})</span></div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-x-8 gap-y-2 mb-6 text-sm">
-                    <div class="flex"><span class="font-bold w-32 text-gray-600">Student Name:</span><span class="border-b border-dotted border-gray-400 flex-1 font-bold">${personal.name}</span></div>
-                    <div class="flex"><span class="font-bold w-32 text-gray-600">Admission No:</span><span class="border-b border-dotted border-gray-400 flex-1">${personal.admNo}</span></div>
-                    <div class="flex"><span class="font-bold w-32 text-gray-600">Class / Roll No:</span><span class="border-b border-dotted border-gray-400 flex-1">${session.class} &nbsp;/&nbsp; <span class="font-mono">${session.rollNo}</span></span></div>
-                    <div class="flex"><span class="font-bold w-32 text-gray-600">Date of Birth:</span><span class="border-b border-dotted border-gray-400 flex-1">${personal.dob}</span></div>
-                    <div class="flex"><span class="font-bold w-32 text-gray-600">Father's Name:</span><span class="border-b border-dotted border-gray-400 flex-1">${personal.father}</span></div>
-                    <div class="flex"><span class="font-bold w-32 text-gray-600">Mother's Name:</span><span class="border-b border-dotted border-gray-400 flex-1">${personal.mother}</span></div>
-                    <div class="flex"><span class="font-bold w-32 text-gray-600">Session:</span><span class="border-b border-dotted border-gray-400 flex-1 font-bold text-indigo-900">${session.session}</span></div>
-                    <div class="flex"><span class="font-bold w-32 text-gray-600">Student ID:</span><span class="border-b border-dotted border-gray-400 flex-1 text-xs pt-1 font-mono text-gray-500">${personal.studentId || '-'}</span></div>
+                <div class="section-header">
+                    <span>Part A: Scholastic Assessment</span>
+                    <span class="text-[9px] normal-case opacity-80">Based on Learning Outcomes</span>
                 </div>
-
-                <div class="section-header">Part A: Scholastic Assessment</div>
-                <table class="marks-table w-full border-collapse border border-black mb-4">
+                <table class="marks-table">
                     <thead>
                         <tr>
-                            <th rowspan="2" class="w-1/4 text-left-align border border-black p-2">SUBJECTS</th>
-                            <th colspan="4" class="border border-black p-2">FORMATIVE (FA)</th>
-                            <th colspan="2" class="border border-black p-2">SUMMATIVE (SA)</th>
-                            <th rowspan="2" class="border border-black p-2">TOTAL<br>(100)</th>
-                            <th rowspan="2" class="border border-black p-2">GRADE</th>
+                            <th rowspan="2" class="w-1/4 text-left-align">Subjects</th>
+                            <th colspan="3">Formative (FA)</th>
+                            <th colspan="2">Summative (SA)</th>
+                            <th rowspan="2" class="w-12">Total<br>(100)</th>
+                            <th rowspan="2" class="w-24">Competency<br>Level</th>
                         </tr>
                         <tr>
-                            <th class="border border-black p-1">FA1</th>
-                            <th class="border border-black p-1">FA2</th>
-                            <th class="border border-black p-1">FA3</th>
-                            <th class="border border-black p-1 bg-gray-50">Tot</th>
-                            <th class="border border-black p-1">SA1</th>
-                            <th class="border border-black p-1">SA2</th>
+                            <th>FA1</th><th>FA2</th><th>FA3</th><th>SA1</th><th>SA2</th>
                         </tr>
                     </thead>
                     <tbody>${marksRows}</tbody>
                     <tfoot>
-                        <tr class="bg-gray-100 font-bold">
-                            <td class="text-left-align border border-black p-2">GRAND TOTAL</td>
-                            <td colspan="6" class="border border-black"></td>
-                            <td class="border border-black p-2">${grandSum}</td>
-                            <td class="border border-black p-2 text-lg">${overallGrade}</td>
+                        <tr class="bg-gray-50 font-bold">
+                            <td class="text-left-align">Overall Result</td>
+                            <td colspan="5" class="text-right pr-2">Total:</td>
+                            <td>${grandSum}</td>
+                            <td><span class="badge ${overallLevel.class}">${overallLevel.label}</span></td>
                         </tr>
                     </tfoot>
                 </table>
 
-                <div class="section-header">Part B: Co-Scholastic Assessment</div>
-                
-                <div class="holistic-grid">
-                    <div class="flex flex-col gap-2">
-                        <div class="holistic-box h-full">
-                            <span class="holistic-label"><i class="fas fa-user mr-1"></i> My Reflection (Self)</span>
-                            <p class="holistic-content">"${selfAssess}"</p>
-                        </div>
-                        <div class="holistic-box h-full">
-                            <span class="holistic-label"><i class="fas fa-users mr-1"></i> Peer Feedback</span>
-                            <p class="holistic-content">"${peerAssess}"</p>
-                        </div>
+                <div class="section-header">Part B: Co-Scholastic & Skills</div>
+                <div class="grid grid-cols-3 gap-2 mb-2">
+                    <div class="nep-box">
+                        <span class="nep-label"><i class="fas fa-palette mr-1"></i> Arts / Craft</span>
+                        <div class="text-sm font-bold text-center mt-2">${co.arts || 'Participated'}</div>
                     </div>
-
-                    <div class="flex flex-col gap-2">
-                        <div class="holistic-box">
-                            <span class="holistic-label"><i class="fas fa-hammer mr-1"></i> Project / Vocational Craft</span>
-                            <p class="text-sm font-bold text-indigo-900 mt-1">${project}</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="holistic-box text-center">
-                                <span class="holistic-label">Socio-Emotional</span>
-                                <div class="text-2xl font-bold text-gray-800 mt-1">${seGrade}</div>
-                            </div>
-                            <div class="holistic-box text-center">
-                                <span class="holistic-label">Health / Physical</span>
-                                <div class="text-2xl font-bold text-gray-800 mt-1">A</div>
-                            </div>
-                        </div>
-                         <div class="holistic-box flex-1">
-                            <span class="holistic-label">Class Teacher Remarks</span>
-                            <p class="text-sm italic text-gray-600 mt-1">${session.remarks || "Promoted to next class."}</p>
-                        </div>
+                    <div class="nep-box">
+                        <span class="nep-label"><i class="fas fa-running mr-1"></i> PE / Health</span>
+                        <div class="text-sm font-bold text-center mt-2">${co.pe || 'Participated'}</div>
+                    </div>
+                    <div class="nep-box">
+                        <span class="nep-label"><i class="fas fa-brain mr-1"></i> Life Skills</span>
+                        <div class="text-sm font-bold text-center mt-2">${co.life_skills || 'Developing'}</div>
                     </div>
                 </div>
 
-                <div class="signature-grid mt-10">
-                    <div><div class="h-10"></div><div class="sign-line">Class Teacher</div></div>
-                    <div><div class="h-10"></div><div class="sign-line">Examination In-Charge</div></div>
-                    <div><div class="h-10"></div><div class="sign-line">Headmaster / Principal</div></div>
+                <div class="section-header">Part C: Personal & Social Development</div>
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                    <div class="nep-box">
+                        <span class="nep-label">Values & Conduct</span>
+                        <p class="nep-content italic">${co.values || 'Displays good values.'}</p>
+                    </div>
+                    <div class="nep-box">
+                        <span class="nep-label">Socio-Emotional Growth</span>
+                        <p class="nep-content italic">${ps.emotion || 'Emotionally stable and happy.'}</p>
+                    </div>
                 </div>
-                
-                <div class="text-center text-[10px] mt-6 text-gray-400">
-                    Generated on ${new Date().toLocaleDateString()}
+
+                <div class="section-header">Part D: Reflections & Feedback</div>
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <div class="nep-box bg-white">
+                        <span class="nep-label text-indigo-700">Student Self-Reflection</span>
+                        <p class="nep-content">"${reflect.student_goals || s.nep_self_assess || 'I have learned a lot this year.'}"</p>
+                    </div>
+                    <div class="nep-box bg-white">
+                        <span class="nep-label text-indigo-700">Teacher's Remarks</span>
+                        <div class="text-[11px]">
+                            <strong>Strengths:</strong> ${s.remarks || 'Diligent student.'}<br>
+                            ${s.teacher_improvements ? '<strong>Needs Focus:</strong> '+s.teacher_improvements : ''}
+                        </div>
+                    </div>
+                    <div class="nep-box bg-white">
+                        <span class="nep-label text-indigo-700">Peer Feedback</span>
+                        <p class="nep-content">"${s.nep_peer_assess || 'Good team player.'}"</p>
+                    </div>
+                    <div class="nep-box bg-white">
+                        <span class="nep-label text-indigo-700">Parent Feedback</span>
+                        <p class="nep-content">"${reflect.parent_feedback || 'Satisfied with progress.'}"</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-2 border-t text-[9px] text-gray-500 flex justify-between">
+                    <div>
+                        <strong>Proficiency Levels:</strong> 
+                        <span class="badge bg-begin ml-1">Beginning (<40%)</span>
+                        <span class="badge bg-dev ml-1">Developing (40-64%)</span>
+                        <span class="badge bg-prof ml-1">Proficient (65-84%)</span>
+                        <span class="badge bg-exem ml-1">Exemplary (85%+)</span>
+                    </div>
+                    <div>Generated: ${new Date().toLocaleDateString()}</div>
+                </div>
+
+                <div class="signature-grid">
+                    <div><div class="h-8"></div><div class="sign-line">Class Teacher</div></div>
+                    <div><div class="h-8"></div><div class="sign-line">Parent / Guardian</div></div>
+                    <div><div class="h-8"></div><div class="sign-line">Headmaster / Principal</div></div>
                 </div>
             </div>`;
         }
 
-        function printCard() {
-            const container = document.getElementById('cardsContainer');
-            if (document.getElementById('welcomeScreen') && !document.getElementById('welcomeScreen').classList.contains('hidden')) {
-                 alert("Please search for a student first.");
-                 return;
-            }
-            if(container.innerHTML.trim() === "") {
-                alert("Please search for a student first.");
-                return;
-            }
-            window.print();
-        }
+        function printCard() { window.print(); }
     </script>
 </body>
 </html>
