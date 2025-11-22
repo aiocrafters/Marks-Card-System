@@ -51,7 +51,7 @@
         .signature-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            margin-top: 80px;
+            margin-top: 40px; 
             text-align: center;
             gap: 20px;
         }
@@ -69,6 +69,10 @@
 
         /* Print Specific Styles */
         @media print {
+            @page {
+                margin: 0;
+                size: A4;
+            }
             body {
                 background: white;
                 margin: 0;
@@ -80,21 +84,29 @@
             /* Ensures container allows scrolling/paging */
             #cardsContainer {
                 display: block !important;
+                width: 100%;
+                margin: 0;
+                padding: 0;
             }
             .paper-sheet {
                 box-shadow: none;
                 margin: 0;
                 width: 100%;
-                height: 100%; /* Use height to fill page */
-                padding: 10mm;
-                /* CRITICAL: Forces each card to be on a new page */
+                /* Fixed height slightly less than 297mm to prevent overflow blank pages */
+                height: 296mm; 
+                padding: 10mm 15mm;
+                
+                /* Forces page breaks */
+                break-inside: avoid;
                 break-after: page; 
                 page-break-after: always; 
+                overflow: hidden;
             }
             /* Hide the last break to avoid empty sheet at end */
-            .paper-sheet:last-child {
-                break-after: auto;
-                page-break-after: auto;
+            .paper-sheet:last-of-type {
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+                margin-bottom: 0;
             }
         }
     </style>
@@ -104,7 +116,6 @@
     <!-- CONTROL PANEL -->
     <div class="no-print bg-white border-b shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <!-- Updated Layout to accommodate Home button -->
             <div class="flex flex-col gap-4">
                 
                 <!-- Header Row -->
@@ -113,7 +124,6 @@
                         <i class="fas fa-school text-blue-600 text-2xl"></i>
                         <h1 class="text-xl font-bold text-gray-800">Marks Card</h1>
                     </div>
-                    <!-- Home Button -->
                     <a href="index.html" class="bg-gray-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-gray-700 transition flex items-center text-sm font-medium">
                         <i class="fas fa-home mr-2"></i> Home
                     </a>
@@ -151,7 +161,7 @@
                             </select>
                         </div>
 
-                        <!-- Search Type (Updated with Student ID) -->
+                        <!-- Search Type -->
                         <div class="flex flex-col text-xs">
                             <label class="font-bold text-gray-500 ml-1">Search By</label>
                             <select id="searchType" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" onchange="updateSearchOptions()">
@@ -187,12 +197,11 @@
     </div>
 
     <!-- MAIN CONTAINER FOR CARDS -->
-    <div class="flex justify-center p-4">
-        <!-- Replaced single static card with a container for dynamic cards -->
-        <div id="cardsContainer" class="w-full flex flex-col items-center gap-8">
-            <!-- Cards will be injected here -->
+    <!-- FIXED: Added print:p-0 print:block to remove padding during print -->
+    <div class="flex justify-center p-4 print:p-0 print:block">
+        <div id="cardsContainer" class="w-full flex flex-col items-center gap-8 print:block print:gap-0">
             
-            <!-- Welcome Screen (Visible initially) -->
+            <!-- Welcome Screen -->
             <div id="welcomeScreen" class="text-center mt-20 text-gray-500">
                 <i class="fas fa-id-card text-6xl mb-4 text-gray-300"></i>
                 <h2 class="text-2xl font-bold">Welcome to the Marks Card System</h2>
@@ -229,7 +238,6 @@
 
                 const data = await response.json();
                 
-                // Parse structure
                 if (Array.isArray(data)) {
                     resultRegister = data;
                 } else {
@@ -240,7 +248,6 @@
                     if(data.school_department) schoolInfo.address = data.school_department;
                 }
 
-                // Populate Session Dropdown
                 const sessionSelect = document.getElementById('sessionFilter');
                 sessionSelect.innerHTML = `<option value="All">All Sessions</option>`; 
                 
@@ -251,7 +258,6 @@
                     sessionSelect.appendChild(opt);
                 });
                 
-                // Default to "All"
                 sessionSelect.value = "All"; 
 
                 statusMsg.innerText = "Database loaded successfully.";
@@ -266,7 +272,7 @@
             }
         }
 
-        // --- 2. SEARCH LOGIC (UPDATED FOR BULK) ---
+        // --- 2. SEARCH LOGIC ---
 
         function handleEnter(e) {
             if(e.key === 'Enter') searchStudent();
@@ -279,15 +285,11 @@
             const input = document.getElementById('searchInput');
             const datalist = document.getElementById('dynamicOptions');
 
-            // 1. Update Placeholder to indicate bulk option
             if (input.value.trim() === "") {
                 input.placeholder = "Empty = Load All in Class";
             }
 
-            // 2. Clear options
             datalist.innerHTML = '';
-
-            // 3. Logic to get Valid Options
             let options = [];
 
             resultRegister.forEach(student => {
@@ -325,7 +327,6 @@
             const container = document.getElementById('cardsContainer');
             const welcome = document.getElementById('welcomeScreen');
 
-            // Clear previous results
             container.innerHTML = '';
 
             if (resultRegister.length === 0) {
@@ -334,7 +335,6 @@
                 return;
             }
 
-            // Safety Check for Bulk Load
             if (!query && sessionFilter === "All") {
                 statusMsg.innerText = "Please select a specific Session if loading entire classes.";
                 statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
@@ -343,20 +343,15 @@
                 return;
             }
 
-            // --- CORE FILTER LOGIC ---
             let matches = [];
 
             resultRegister.forEach(student => {
                 student.sessions.forEach(sess => {
                     let isMatch = true;
 
-                    // 1. Session Filter
                     if (sessionFilter !== "All" && sess.session !== sessionFilter) isMatch = false;
-
-                    // 2. Class Filter
                     if (isMatch && classFilter !== "All" && sess.class !== classFilter) isMatch = false;
 
-                    // 3. Search Value Filter (Optional)
                     if (isMatch && query) {
                         let queryMatch = false;
                         if (searchType === 'admNo' && student.admNo.toLowerCase() === query) queryMatch = true;
@@ -381,17 +376,13 @@
                 return;
             }
 
-            // SORTING: Sort by Class, then by Roll Number
             matches.sort((a, b) => {
-                // Sort by Class Name
                 if (a.session.class !== b.session.class) {
                     return a.session.class.localeCompare(b.session.class, undefined, {numeric: true});
                 }
-                // Sort by Roll No (Numeric)
                 return parseInt(a.session.rollNo) - parseInt(b.session.rollNo);
             });
 
-            // Render Results
             statusMsg.innerText = `Found ${matches.length} record(s). Ready to print.`;
             statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-green-600";
             welcome.classList.add('hidden');
@@ -445,7 +436,6 @@
 
             return `
             <div class="paper-sheet">
-                <!-- Header -->
                 <div class="text-center border-b-2 border-black pb-4 mb-6">
                     <h1 class="text-3xl font-bold uppercase tracking-wider mb-1">${schoolInfo.name}</h1>
                     <p class="text-sm font-semibold text-gray-600">${schoolInfo.address}</p>
@@ -453,7 +443,6 @@
                     <p class="mt-2">Academic Session: <span class="font-bold">${session.session}</span></p>
                 </div>
 
-                <!-- Details -->
                 <div class="grid grid-cols-2 gap-x-12 gap-y-4 mb-8 text-sm">
                     <div class="flex"><span class="font-bold w-32">Student Name:</span><span class="border-b border-dotted border-black flex-1">${personal.name}</span></div>
                     <div class="flex"><span class="font-bold w-32">Admission No:</span><span class="border-b border-dotted border-black flex-1">${personal.admNo}</span></div>
@@ -467,7 +456,6 @@
                     <div class="flex"><span class="font-bold w-32">Student ID:</span><span class="border-b border-dotted border-black flex-1 text-xs pt-1 font-mono tracking-widest font-semibold text-gray-800">${personal.studentId || '-'}</span></div>
                 </div>
 
-                <!-- Table -->
                 <table class="marks-table w-full border-collapse border border-black mb-8">
                     <thead>
                         <tr>
@@ -497,27 +485,24 @@
                     </tfoot>
                 </table>
 
-                <!-- Remarks -->
-                <div class="mt-8 border border-black p-4 h-24">
+                <div class="mt-8 border border-black p-4 h-20">
                     <span class="font-bold">Class Teacher's Remarks:</span>
                     <p class="italic mt-2 text-gray-700">Promoted to next class with excellent performance.</p>
                 </div>
 
-                <!-- Legend -->
                 <div class="mt-4 text-xs text-gray-500 flex justify-between">
                     <span>A+: 91-100</span><span>A: 81-90</span><span>B+: 71-80</span>
                     <span>B: 61-70</span><span>C+: 51-60</span><span>C: 41-50</span>
                     <span>D: 33-40</span><span>E: Below 33</span>
                 </div>
 
-                <!-- Signatures -->
-                <div class="signature-grid mt-16">
+                <div class="signature-grid mt-8">
                     <div><div class="h-12"></div><div class="sign-line">Class Teacher</div></div>
                     <div><div class="h-12"></div><div class="sign-line">Examination In-Charge</div></div>
                     <div><div class="h-12"></div><div class="sign-line">Headmaster / Principal</div></div>
                 </div>
                 
-                <div class="text-center text-xs mt-10 text-gray-400">
+                <div class="text-center text-xs mt-4 text-gray-400">
                     Generated on ${new Date().toLocaleDateString()} | System Ver 4.0
                 </div>
             </div>`;
@@ -525,7 +510,6 @@
 
         function printCard() {
             const container = document.getElementById('cardsContainer');
-            // If the welcome screen is not hidden, we shouldn't print
             if (document.getElementById('welcomeScreen') && !document.getElementById('welcomeScreen').classList.contains('hidden')) {
                  alert("Please search for a student first.");
                  return;
