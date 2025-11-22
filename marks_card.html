@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Marks Card Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400;500;700&display=swap');
+
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Paper effect for the card */
+        .paper-sheet {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm;
+            margin: 20px auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            position: relative;
+            font-family: 'Noto Serif', serif;
+        }
+
+        /* Table Styling */
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .marks-table th, .marks-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+        .marks-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .text-left-align {
+            text-align: left !important;
+            padding-left: 10px !important;
+        }
+
+        /* Signature area */
+        .signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            margin-top: 80px;
+            text-align: center;
+            gap: 20px;
+        }
+        .sign-line {
+            border-top: 1px solid #000;
+            margin: 0 20px;
+            padding-top: 5px;
+            font-weight: bold;
+        }
+
+        /* Status Messages */
+        #statusMsg {
+            transition: all 0.3s ease;
+        }
+
+        /* Print Specific Styles */
+        @media print {
+            body {
+                background: white;
+                margin: 0;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            /* Ensures container allows scrolling/paging */
+            #cardsContainer {
+                display: block !important;
+            }
+            .paper-sheet {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                height: 100%; /* Use height to fill page */
+                padding: 10mm;
+                /* CRITICAL: Forces each card to be on a new page */
+                break-after: page; 
+                page-break-after: always; 
+            }
+            /* Hide the last break to avoid empty sheet at end */
+            .paper-sheet:last-child {
+                break-after: auto;
+                page-break-after: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CONTROL PANEL -->
+    <div class="no-print bg-white border-b shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col items-center gap-4">
+                
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-school text-blue-600 text-2xl"></i>
+                    <h1 class="text-xl font-bold text-gray-800">Marks Card</h1>
+                </div>
+
+                <div class="flex flex-wrap w-full md:w-auto gap-2 items-center bg-gray-50 p-2 rounded-lg border">
+                    
+                    <!-- Session Filter -->
+                    <div class="flex flex-col text-xs">
+                        <label class="font-bold text-gray-500 ml-1">Session</label>
+                        <select id="sessionFilter" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                            <!-- 'All' and other years populated by JS -->
+                        </select>
+                    </div>
+
+                    <!-- Class Filter -->
+                    <div class="flex flex-col text-xs">
+                        <label class="font-bold text-gray-500 ml-1">Class</label>
+                        <select id="classFilter" onchange="updateSearchOptions()" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option value="All">All Classes</option>
+                            <option value="LKG">LKG</option>
+                            <option value="UKG">UKG</option>
+                            <option value="1st">1st</option>
+                            <option value="2nd">2nd</option>
+                            <option value="3rd">3rd</option>
+                            <option value="4th">4th</option>
+                            <option value="5th">5th</option>
+                            <option value="6th">6th</option>
+                            <option value="7th">7th</option>
+                            <option value="8th">8th</option>
+                            <option value="9th">9th</option>
+                            <option value="10th">10th</option>
+                        </select>
+                    </div>
+
+                    <!-- Search Type (Updated with Student ID) -->
+                    <div class="flex flex-col text-xs">
+                        <label class="font-bold text-gray-500 ml-1">Search By</label>
+                        <select id="searchType" class="border rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" onchange="updateSearchOptions()">
+                            <option value="admNo">Admission No</option>
+                            <option value="studentId">Student ID</option>
+                            <option value="rollNo">Roll No</option>
+                            <option value="name">Name</option>
+                        </select>
+                    </div>
+
+                    <!-- Input Field -->
+                    <div class="flex flex-col text-xs flex-1 min-w-[200px]">
+                        <label class="font-bold text-gray-500 ml-1">Value</label>
+                        <input type="text" id="searchInput" list="dynamicOptions" placeholder="Select or Type..." 
+                               class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               onkeypress="handleEnter(event)" onfocus="updateSearchOptions()">
+                        <datalist id="dynamicOptions"></datalist>
+                    </div>
+
+                    <button onclick="searchStudent()" 
+                            class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition shadow-sm font-medium">
+                        <i class="fas fa-search mr-1"></i> Find
+                    </button>
+                    <button onclick="printCard()" 
+                            class="mt-4 bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition shadow-sm font-medium">
+                        <i class="fas fa-print mr-1"></i> Print
+                    </button>
+                </div>
+            </div>
+            <div id="statusMsg" class="text-center mt-2 text-sm font-medium h-5 text-red-500"></div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER FOR CARDS -->
+    <div class="flex justify-center p-4">
+        <!-- Replaced single static card with a container for dynamic cards -->
+        <div id="cardsContainer" class="w-full flex flex-col items-center gap-8">
+            <!-- Cards will be injected here -->
+            
+            <!-- Welcome Screen (Visible initially) -->
+            <div id="welcomeScreen" class="text-center mt-20 text-gray-500">
+                <i class="fas fa-id-card text-6xl mb-4 text-gray-300"></i>
+                <h2 class="text-2xl font-bold">Welcome to the Marks Card System</h2>
+                <p class="mt-2 max-w-md mx-auto">Use the filters above to find a student.</p>
+                <div class="mt-6 bg-white p-4 rounded-lg border shadow-sm inline-block text-left text-sm">
+                    <p class="font-bold mb-2">To Print Bulk / Entire Class:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Select <b>Session</b> (e.g., 2024-2025)</li>
+                        <li>Select <b>Class</b> (e.g., 10th)</li>
+                        <li>Leave <b>Value</b> empty</li>
+                        <li>Click <b>Find</b></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. STATE & LOAD ---
+        let resultRegister = [];
+        let supportedSessions = [];
+        let schoolInfo = {
+            name: "Government High School",
+            address: "Department of School Education • Kashmir"
+        };
+
+        window.onload = loadDatabase;
+
+        async function loadDatabase() {
+            const statusMsg = document.getElementById('statusMsg');
+            try {
+                const response = await fetch('students_db.json');
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                const data = await response.json();
+                
+                // Parse structure
+                if (Array.isArray(data)) {
+                    resultRegister = data;
+                } else {
+                    resultRegister = data.students || [];
+                    supportedSessions = data.supported_sessions || ["2023-2024", "2024-2025"];
+                    
+                    if(data.school_name) schoolInfo.name = data.school_name;
+                    if(data.school_department) schoolInfo.address = data.school_department;
+                }
+
+                // Populate Session Dropdown
+                const sessionSelect = document.getElementById('sessionFilter');
+                sessionSelect.innerHTML = `<option value="All">All Sessions</option>`; 
+                
+                supportedSessions.forEach(year => {
+                    const opt = document.createElement('option');
+                    opt.value = year;
+                    opt.innerText = year;
+                    sessionSelect.appendChild(opt);
+                });
+                
+                // Default to "All"
+                sessionSelect.value = "All"; 
+
+                statusMsg.innerText = "Database loaded successfully.";
+                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-green-600";
+                
+                updateSearchOptions();
+
+            } catch (error) {
+                console.error("Could not load database:", error);
+                statusMsg.innerText = "Error: Run on Local Server to fetch JSON.";
+                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
+            }
+        }
+
+        // --- 2. SEARCH LOGIC (UPDATED FOR BULK) ---
+
+        function handleEnter(e) {
+            if(e.key === 'Enter') searchStudent();
+        }
+
+        function updateSearchOptions() {
+            const type = document.getElementById('searchType').value;
+            const classFilter = document.getElementById('classFilter').value;
+            const sessionFilter = document.getElementById('sessionFilter').value;
+            const input = document.getElementById('searchInput');
+            const datalist = document.getElementById('dynamicOptions');
+
+            // 1. Update Placeholder to indicate bulk option
+            if (input.value.trim() === "") {
+                input.placeholder = "Empty = Load All in Class";
+            }
+
+            // 2. Clear options
+            datalist.innerHTML = '';
+
+            // 3. Logic to get Valid Options
+            let options = [];
+
+            resultRegister.forEach(student => {
+                const matchingSessions = student.sessions.filter(s => {
+                    const sessionMatch = (sessionFilter === "All") || (s.session === sessionFilter);
+                    const classMatch = (classFilter === "All") || (s.class === classFilter);
+                    return sessionMatch && classMatch;
+                });
+
+                if (matchingSessions.length > 0) {
+                    if (type === 'admNo') options.push(student.admNo);
+                    if (type === 'name') options.push(student.name);
+                    if (type === 'studentId') options.push(student.studentId);
+                    if (type === 'rollNo') {
+                        matchingSessions.forEach(ms => options.push(ms.rollNo));
+                    }
+                }
+            });
+
+            const uniqueOptions = [...new Set(options)].sort();
+            uniqueOptions.forEach(val => {
+                const option = document.createElement('option');
+                option.value = val;
+                datalist.appendChild(option);
+            });
+        }
+
+        function searchStudent() {
+            const sessionFilter = document.getElementById('sessionFilter').value;
+            const classFilter = document.getElementById('classFilter').value;
+            const searchType = document.getElementById('searchType').value;
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            const statusMsg = document.getElementById('statusMsg');
+            const container = document.getElementById('cardsContainer');
+            const welcome = document.getElementById('welcomeScreen');
+
+            // Clear previous results
+            container.innerHTML = '';
+
+            if (resultRegister.length === 0) {
+                statusMsg.innerText = "Database empty/loading...";
+                container.appendChild(welcome);
+                return;
+            }
+
+            // Safety Check for Bulk Load
+            if (!query && sessionFilter === "All") {
+                statusMsg.innerText = "Please select a specific Session if loading entire classes.";
+                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
+                container.appendChild(welcome);
+                welcome.classList.remove('hidden');
+                return;
+            }
+
+            // --- CORE FILTER LOGIC ---
+            let matches = [];
+
+            resultRegister.forEach(student => {
+                student.sessions.forEach(sess => {
+                    let isMatch = true;
+
+                    // 1. Session Filter
+                    if (sessionFilter !== "All" && sess.session !== sessionFilter) isMatch = false;
+
+                    // 2. Class Filter
+                    if (isMatch && classFilter !== "All" && sess.class !== classFilter) isMatch = false;
+
+                    // 3. Search Value Filter (Optional)
+                    if (isMatch && query) {
+                        let queryMatch = false;
+                        if (searchType === 'admNo' && student.admNo.toLowerCase() === query) queryMatch = true;
+                        else if (searchType === 'studentId' && student.studentId === query) queryMatch = true;
+                        else if (searchType === 'name' && student.name.toLowerCase().includes(query)) queryMatch = true;
+                        else if (searchType === 'rollNo' && sess.rollNo === query) queryMatch = true;
+                        
+                        if (!queryMatch) isMatch = false;
+                    }
+
+                    if (isMatch) {
+                        matches.push({ personal: student, session: sess });
+                    }
+                });
+            });
+
+            if (matches.length === 0) {
+                statusMsg.innerText = "No records found matching filter criteria.";
+                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
+                container.appendChild(welcome);
+                welcome.classList.remove('hidden');
+                return;
+            }
+
+            // SORTING: Sort by Class, then by Roll Number
+            matches.sort((a, b) => {
+                // Sort by Class Name
+                if (a.session.class !== b.session.class) {
+                    return a.session.class.localeCompare(b.session.class, undefined, {numeric: true});
+                }
+                // Sort by Roll No (Numeric)
+                return parseInt(a.session.rollNo) - parseInt(b.session.rollNo);
+            });
+
+            // Render Results
+            statusMsg.innerText = `Found ${matches.length} record(s). Ready to print.`;
+            statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-green-600";
+            welcome.classList.add('hidden');
+
+            matches.forEach(match => {
+                const cardHTML = generateCardHTML(match.personal, match.session);
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        // --- 3. HTML GENERATION ---
+
+        function getGrade(score) {
+            if (score >= 91) return 'A+';
+            if (score >= 81) return 'A';
+            if (score >= 71) return 'B+';
+            if (score >= 61) return 'B';
+            if (score >= 51) return 'C+';
+            if (score >= 41) return 'C';
+            if (score >= 33) return 'D';
+            return 'E';
+        }
+
+        function generateCardHTML(personal, session) {
+            const marksRows = (session.subjects || []).map(sub => {
+                const faTotal = (sub.fa1||0) + (sub.fa2||0) + (sub.fa3||0);
+                const subTotal = faTotal + (sub.sa1||0) + (sub.sa2||0);
+                return `
+                    <tr>
+                        <td class="text-left-align font-semibold border border-black p-2">${sub.name}</td>
+                        <td class="border border-black p-2">${sub.fa1||0}</td>
+                        <td class="border border-black p-2">${sub.fa2||0}</td>
+                        <td class="border border-black p-2">${sub.fa3||0}</td>
+                        <td class="bg-gray-50 font-semibold border border-black p-2">${faTotal}</td>
+                        <td class="border border-black p-2">${sub.sa1||0}</td>
+                        <td class="border border-black p-2">${sub.sa2||0}</td>
+                        <td class="font-bold text-blue-800 border border-black p-2">${subTotal}</td>
+                        <td class="font-bold border border-black p-2">${getGrade(subTotal)}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            let grandSum = 0;
+            let count = 0;
+            (session.subjects || []).forEach(sub => {
+                grandSum += (sub.fa1||0) + (sub.fa2||0) + (sub.fa3||0) + (sub.sa1||0) + (sub.sa2||0);
+                count++;
+            });
+            const avg = count > 0 ? grandSum/count : 0;
+            const overallGrade = getGrade(avg);
+
+            return `
+            <div class="paper-sheet">
+                <!-- Header -->
+                <div class="text-center border-b-2 border-black pb-4 mb-6">
+                    <h1 class="text-3xl font-bold uppercase tracking-wider mb-1">${schoolInfo.name}</h1>
+                    <p class="text-sm font-semibold text-gray-600">${schoolInfo.address}</p>
+                    <h2 class="text-xl font-bold mt-4 border-2 border-black inline-block px-6 py-1 rounded-full">MARKS CARD / RESULT SHEET</h2>
+                    <p class="mt-2">Academic Session: <span class="font-bold">${session.session}</span></p>
+                </div>
+
+                <!-- Details -->
+                <div class="grid grid-cols-2 gap-x-12 gap-y-4 mb-8 text-sm">
+                    <div class="flex"><span class="font-bold w-32">Student Name:</span><span class="border-b border-dotted border-black flex-1">${personal.name}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Admission No:</span><span class="border-b border-dotted border-black flex-1">${personal.admNo}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Class / Roll No:</span><span class="border-b border-dotted border-black flex-1">${session.class} / ${session.rollNo}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Gender:</span><span class="border-b border-dotted border-black flex-1">${personal.gender}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Father's Name:</span><span class="border-b border-dotted border-black flex-1">${personal.father}</span></div>
+                    <div class="flex"><span class="font-bold w-32">D.O.B:</span><span class="border-b border-dotted border-black flex-1">${personal.dob}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Mother's Name:</span><span class="border-b border-dotted border-black flex-1">${personal.mother}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Category:</span><span class="border-b border-dotted border-black flex-1">${personal.category}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Aadhaar No:</span><span class="border-b border-dotted border-black flex-1">${personal.aadhaar || '-'}</span></div>
+                    <div class="flex"><span class="font-bold w-32">Student ID:</span><span class="border-b border-dotted border-black flex-1 text-xs pt-1 font-mono tracking-widest font-semibold text-gray-800">${personal.studentId || '-'}</span></div>
+                </div>
+
+                <!-- Table -->
+                <table class="marks-table w-full border-collapse border border-black mb-8">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="w-1/4 text-left-align border border-black p-2">SUBJECTS</th>
+                            <th colspan="4" class="border border-black p-2">FORMATIVE ASSESSMENT (FA)</th>
+                            <th colspan="2" class="border border-black p-2">SUMMATIVE (SA)</th>
+                            <th rowspan="2" class="border border-black p-2">GRAND TOTAL<br>(100)</th>
+                            <th rowspan="2" class="border border-black p-2">GRADE</th>
+                        </tr>
+                        <tr>
+                            <th class="border border-black p-1">FA1</th>
+                            <th class="border border-black p-1">FA2</th>
+                            <th class="border border-black p-1">FA3</th>
+                            <th class="border border-black p-1">Total</th>
+                            <th class="border border-black p-1">SA1</th>
+                            <th class="border border-black p-1">SA2</th>
+                        </tr>
+                    </thead>
+                    <tbody>${marksRows}</tbody>
+                    <tfoot>
+                        <tr class="bg-gray-100 font-bold">
+                            <td class="text-left-align border border-black p-2">OVERALL RESULT</td>
+                            <td colspan="6" class="border border-black"></td>
+                            <td class="border border-black p-2">${grandSum}</td>
+                            <td class="border border-black p-2">${overallGrade}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Remarks -->
+                <div class="mt-8 border border-black p-4 h-24">
+                    <span class="font-bold">Class Teacher's Remarks:</span>
+                    <p class="italic mt-2 text-gray-700">Promoted to next class with excellent performance.</p>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-4 text-xs text-gray-500 flex justify-between">
+                    <span>A+: 91-100</span><span>A: 81-90</span><span>B+: 71-80</span>
+                    <span>B: 61-70</span><span>C+: 51-60</span><span>C: 41-50</span>
+                    <span>D: 33-40</span><span>E: Below 33</span>
+                </div>
+
+                <!-- Signatures -->
+                <div class="signature-grid mt-16">
+                    <div><div class="h-12"></div><div class="sign-line">Class Teacher</div></div>
+                    <div><div class="h-12"></div><div class="sign-line">Examination In-Charge</div></div>
+                    <div><div class="h-12"></div><div class="sign-line">Headmaster / Principal</div></div>
+                </div>
+                
+                <div class="text-center text-xs mt-10 text-gray-400">
+                    Generated on ${new Date().toLocaleDateString()} | System Ver 4.0
+                </div>
+            </div>`;
+        }
+
+        function printCard() {
+            const container = document.getElementById('cardsContainer');
+            // If the welcome screen is not hidden, we shouldn't print
+            if (document.getElementById('welcomeScreen') && !document.getElementById('welcomeScreen').classList.contains('hidden')) {
+                 alert("Please search for a student first.");
+                 return;
+            }
+            if(container.innerHTML.trim() === "") {
+                alert("Please search for a student first.");
+                return;
+            }
+            window.print();
+        }
+    </script>
+</body>
+</html>
