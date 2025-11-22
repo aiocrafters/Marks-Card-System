@@ -1,6 +1,6 @@
 {
   "school_name": "KIDS HUB",
-  "school_department": "test",
+  "school_department": "Srinagar",
   "supported_sessions": [
     "2013-2014",
     "2014-2015",
@@ -13,7 +13,8 @@
     "2021-2022",
     "2022-2023",
     "2023-2024",
-    "2024-2025"
+    "2024-2025",
+    "2025-2026"
   ],
   "students": [
     {
@@ -31,6 +32,7 @@
         {
           "session": "2013-2014",
           "class": "LKG",
+          "section": "A",
           "rollNo": "1",
           "subjects": [
             {
@@ -78,7 +80,8 @@
         {
           "session": "2014-2015",
           "class": "UKG",
-          "rollNo": "1",
+          "section": "",
+          "rollNo": "5",
           "subjects": [
             {
               "name": "English",
@@ -125,7 +128,8 @@
         {
           "session": "2015-2016",
           "class": "1st",
-          "rollNo": "1",
+          "section": "",
+          "rollNo": "7",
           "subjects": [
             {
               "name": "English",
