@@ -35,7 +35,7 @@
     <div class="flex-1 overflow-auto p-6">
         <div class="max-w-7xl mx-auto bg-white rounded-lg shadow">
             
-            <!-- Global Settings Card (Updated) -->
+            <!-- Global Settings Card -->
             <div class="p-6 bg-indigo-50 border-b">
                 <h2 class="font-bold text-gray-700 mb-4"><i class="fas fa-school mr-2"></i>School & Global Settings</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -48,6 +48,19 @@
                         <input id="schoolDept" class="w-full border rounded p-2 mt-1" placeholder="e.g. Residency Road, Srinagar" onchange="saveToLocal()">
                     </div>
                 </div>
+            </div>
+
+            <!-- Search Bar Section (NEW) -->
+            <div class="p-4 border-b bg-gray-50 flex items-center">
+                <div class="relative w-full max-w-md">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                    <input type="text" id="searchBar" onkeyup="renderMainTable()" 
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                        placeholder="Search by Name, Adm No, or Student ID...">
+                </div>
+                <span class="ml-4 text-sm text-gray-500" id="recordCountDisplay"></span>
             </div>
 
              <table class="min-w-full divide-y divide-gray-200">
@@ -213,7 +226,7 @@
             await initializeApp();
         };
 
-        // NEW: Helper to generate Timestamp-Based ID
+        // Helper to generate Timestamp-Based ID
         function generateTimestampId() {
             const now = new Date();
             const pad = (n, s=2) => String(n).padStart(s, '0');
@@ -272,9 +285,9 @@
             }
         }
 
-        function deleteStudent(idx) {
+        function deleteStudent(originalIndex) {
             if(confirm("Delete this student and all their history?")) {
-                db.students.splice(idx, 1);
+                db.students.splice(originalIndex, 1);
                 saveToLocal();
                 renderMainTable();
             }
@@ -285,17 +298,46 @@
         function renderMainTable() {
             const tbody = document.getElementById('mainTableBody');
             const empty = document.getElementById('emptyState');
+            const countDisplay = document.getElementById('recordCountDisplay');
+            const query = document.getElementById('searchBar').value.toLowerCase();
+
             tbody.innerHTML = '';
 
             if(!db.students || db.students.length === 0) {
                 empty.classList.remove('hidden');
+                empty.innerText = "Database is empty.";
+                countDisplay.innerText = "";
                 return;
             }
+
+            // Filter Logic
+            const filteredStudents = db.students.filter(s => {
+                if (!query) return true;
+                return (
+                    s.name.toLowerCase().includes(query) || 
+                    s.admNo.toLowerCase().includes(query) || 
+                    (s.studentId && s.studentId.toLowerCase().includes(query))
+                );
+            });
+
+            if (filteredStudents.length === 0) {
+                empty.classList.remove('hidden');
+                empty.innerText = "No matching students found.";
+                countDisplay.innerText = "0 matching records";
+                return;
+            }
+            
             empty.classList.add('hidden');
+            countDisplay.innerText = `${filteredStudents.length} records found`;
 
-            db.students.sort((a,b) => parseInt(a.admNo) - parseInt(b.admNo));
+            // Sort numerically by Adm No
+            filteredStudents.sort((a,b) => parseInt(a.admNo) - parseInt(b.admNo));
 
-            tbody.innerHTML = db.students.map((s, idx) => `
+            tbody.innerHTML = filteredStudents.map((s) => {
+                // CRITICAL: Find original index in the main DB array to ensure edit/delete works on the right person
+                const originalIndex = db.students.indexOf(s);
+
+                return `
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">${s.admNo}</td>
                     <td class="px-6 py-4 text-xs font-mono text-gray-500 select-all">${s.studentId}</td>
@@ -305,11 +347,11 @@
                         ${s.sessions.map(sess => `<span class="bg-gray-100 px-2 py-1 rounded text-xs mr-1 border">${sess.session} (${sess.class})</span>`).join('')}
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <button onclick="openStudentModal(${idx})" class="text-indigo-600 hover:text-indigo-900 mr-3"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteStudent(${idx})" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                        <button onclick="openStudentModal(${originalIndex})" class="text-indigo-600 hover:text-indigo-900 mr-3"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteStudent(${originalIndex})" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         // --- MODALS ---
@@ -319,7 +361,7 @@
             document.getElementById('studentModal').classList.remove('hidden');
             
             if (index === -1) {
-                // New Student: Generate Timestamp ID
+                // New Student
                 document.getElementById('studentId').value = generateTimestampId();
                 // Clear other fields
                 const inputs = document.querySelectorAll('#studentModal input:not([readonly])'); 
@@ -331,7 +373,6 @@
             } else {
                 // Edit Student
                 const s = db.students[index];
-                // Fallback to timestamp ID if ID is missing (rare case for old data)
                 document.getElementById('studentId').value = s.studentId || generateTimestampId();
                 document.getElementById('admNo').value = s.admNo;
                 document.getElementById('name').value = s.name;
