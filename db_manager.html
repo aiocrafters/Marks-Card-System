@@ -8,7 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { font-family: sans-serif; }
-        /* Custom Scrollbar */
         .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -24,11 +23,9 @@
             <a href="index.html" class="bg-gray-600 text-white px-4 py-2 rounded shadow hover:bg-gray-700 text-sm flex items-center decoration-0">
                 <i class="fas fa-home mr-2"></i> Home
             </a>
-            
             <button onclick="hardReset()" class="bg-yellow-500 text-white px-4 py-2 rounded shadow hover:bg-yellow-600 text-sm font-medium" title="Discard changes and reload from file">
                 <i class="fas fa-sync mr-1"></i> Reload File
             </button>
-
             <button onclick="downloadJSON()" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 text-sm font-medium">
                 <i class="fas fa-download mr-1"></i> Download DB
             </button>
@@ -40,7 +37,6 @@
 
     <div class="flex-1 overflow-auto p-6">
         <div class="max-w-full mx-auto bg-white rounded-lg shadow"> 
-            
             <div class="p-6 bg-indigo-50 border-b">
                 <h2 class="font-bold text-gray-700 mb-4"><i class="fas fa-school mr-2"></i>School Settings</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -48,19 +44,13 @@
                     <input id="schoolDept" class="border rounded p-2 w-full" placeholder="Address / Department" onchange="saveToLocal()">
                 </div>
             </div>
-
             <div class="p-4 border-b bg-gray-50 flex items-center justify-between">
                 <div class="relative w-full max-w-lg">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </span>
-                    <input type="text" id="searchBar" onkeyup="renderMainTable()" 
-                        class="block w-full pl-10 border border-gray-300 rounded-md p-2 focus:ring-indigo-500 focus:border-indigo-500" 
-                        placeholder="Search by Name, Adm No, or Student ID...">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-search text-gray-400"></i></span>
+                    <input type="text" id="searchBar" onkeyup="renderMainTable()" class="block w-full pl-10 border border-gray-300 rounded-md p-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Search by Name, Adm No, or Student ID...">
                 </div>
                 <span class="ml-4 text-sm text-gray-500 font-medium" id="recordCountDisplay"></span>
             </div>
-
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -87,50 +77,25 @@
                 <h3 class="text-lg font-bold text-gray-800">Student Details</h3>
                 <button onclick="closeStudentModal()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
-            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div>
-                    <label class="text-xs font-bold text-gray-500">Student ID (Auto)</label>
-                    <input id="studentId" class="w-full border rounded p-2 bg-gray-100 text-gray-600 font-mono text-xs" readonly>
-                </div>
+                <div><label class="text-xs font-bold text-gray-500">Student ID (Auto)</label><input id="studentId" class="w-full border rounded p-2 bg-gray-100 text-gray-600 font-mono text-xs" readonly></div>
                 <div><label class="text-xs font-bold text-gray-500">Adm No</label><input id="admNo" class="w-full border rounded p-2"></div>
                 <div><label class="text-xs font-bold text-gray-500">Name</label><input id="name" class="w-full border rounded p-2"></div>
-                
                 <div><label class="text-xs font-bold text-gray-500">Aadhaar No</label><input id="aadhaar" class="w-full border rounded p-2"></div>
                 <div><label class="text-xs font-bold text-gray-500">Father's Name</label><input id="father" class="w-full border rounded p-2"></div>
                 <div><label class="text-xs font-bold text-gray-500">Mother's Name</label><input id="mother" class="w-full border rounded p-2"></div>
-                
                 <div><label class="text-xs font-bold text-gray-500">DOB</label><input id="dob" type="date" class="w-full border rounded p-2"></div>
-                <div>
-                    <label class="text-xs font-bold text-gray-500">Gender</label>
-                    <select id="gender" class="w-full border rounded p-2 bg-white">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-500">Category</label>
-                    <select id="category" class="w-full border rounded p-2 bg-white">
-                        <option value="General / Open">General / Open</option>
-                        <option value="SC">SC</option>
-                        <option value="ST">ST</option>
-                        <option value="OBC">OBC/RBA</option>
-                        <option value="EWS">EWS</option>
-                    </select>
-                </div>
+                <div><label class="text-xs font-bold text-gray-500">Gender</label><select id="gender" class="w-full border rounded p-2 bg-white"><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                <div><label class="text-xs font-bold text-gray-500">Category</label><select id="category" class="w-full border rounded p-2 bg-white"><option value="General / Open">General / Open</option><option value="SC">SC</option><option value="ST">ST</option><option value="OBC">OBC/RBA</option><option value="EWS">EWS</option></select></div>
                 <div><label class="text-xs font-bold text-gray-500">Contact</label><input id="contact" class="w-full border rounded p-2"></div>
             </div>
-
             <div class="border-t pt-4">
                 <div class="flex justify-between items-center mb-4">
                     <h4 class="font-bold text-gray-700">Academic Sessions History</h4>
-                    <button onclick="openSessionForm()" class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 text-sm font-bold">
-                        <i class="fas fa-plus mr-1"></i> Add Session
-                    </button>
+                    <button onclick="openSessionForm()" class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 text-sm font-bold"><i class="fas fa-plus mr-1"></i> Add Session</button>
                 </div>
                 <div id="sessionsList" class="space-y-2"></div>
             </div>
-
             <div class="mt-6 flex justify-end pt-4 border-t">
                 <button onclick="saveStudent()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 font-medium">Save Student</button>
             </div>
@@ -140,10 +105,7 @@
     <div id="historyModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden z-[60] flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
             <div class="p-5 border-b flex justify-between items-center bg-gray-50">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800">Academic History</h3>
-                    <p class="text-sm text-gray-500" id="historyModalSubtitle">Student Name</p>
-                </div>
+                <div><h3 class="text-xl font-bold text-gray-800">Academic History</h3><p class="text-sm text-gray-500" id="historyModalSubtitle">Student Name</p></div>
                 <button onclick="closeHistoryModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
             </div>
             <div class="p-6">
@@ -171,107 +133,48 @@
 
     <div id="sessionFormOverlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden z-[60] flex items-center justify-center">
         <div class="bg-white rounded w-full max-w-5xl p-6 shadow-2xl max-h-[95vh] overflow-y-auto custom-scroll">
-            <h3 class="font-bold text-lg mb-4 border-b pb-2 text-indigo-700">Edit Session Data (NEP Compliant)</h3>
+            <h3 class="font-bold text-lg mb-4 border-b pb-2 text-indigo-700">Edit Session Data</h3>
             <input type="hidden" id="sess_index">
             
             <div class="grid grid-cols-5 gap-4 mb-4">
-                <div>
-                    <label class="text-xs font-bold text-gray-600">Year</label>
-                    <select id="sess_year" class="w-full border rounded p-2 text-sm bg-white">
-                        <option>2025-2026</option>
-                        <option>2024-2025</option>
-                        <option>2023-2024</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-600">Class</label>
-                    <select id="sess_class" class="w-full border rounded p-2 text-sm bg-white">
-                        <option>Nursery</option><option>LKG</option><option>UKG</option>
-                        <option>1st</option><option>2nd</option><option>3rd</option>
-                        <option>4th</option><option>5th</option><option>6th</option>
-                        <option>7th</option><option>8th</option><option>9th</option><option>10th</option>
-                    </select>
-                </div>
+                <div><label class="text-xs font-bold text-gray-600">Year</label><select id="sess_year" class="w-full border rounded p-2 text-sm bg-white"><option>2025-2026</option><option>2024-2025</option><option>2023-2024</option></select></div>
+                <div><label class="text-xs font-bold text-gray-600">Class</label><select id="sess_class" class="w-full border rounded p-2 text-sm bg-white"><option>Nursery</option><option>LKG</option><option>UKG</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th</option><option>5th</option><option>6th</option><option>7th</option><option>8th</option><option>9th</option><option>10th</option></select></div>
                 <div><label class="text-xs font-bold text-gray-600">Section</label><input id="sess_section" class="w-full border rounded p-2 text-sm"></div>
                 <div><label class="text-xs font-bold text-gray-600">Roll No</label><input id="sess_roll" class="w-full border rounded p-2 text-sm"></div>
-                <div>
-                    <label class="text-xs font-bold text-gray-600">Attendance</label>
-                    <div class="flex gap-1">
-                        <input id="att_present" placeholder="Pres" class="w-1/2 border rounded p-2 text-center text-sm" type="number">
-                        <input id="att_working" placeholder="Total" class="w-1/2 border rounded p-2 text-center text-sm" type="number">
-                    </div>
-                </div>
+                <div><label class="text-xs font-bold text-gray-600">Attendance</label><div class="flex gap-1"><input id="att_present" placeholder="Pres" class="w-1/2 border rounded p-2 text-center text-sm" type="number"><input id="att_working" placeholder="Total" class="w-1/2 border rounded p-2 text-center text-sm" type="number"></div></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
                 <div class="border rounded p-3 bg-gray-50 shadow-sm">
                     <h4 class="font-bold text-gray-700 text-xs uppercase mb-2 border-b pb-1">Part A: Scholastic (Marks)</h4>
                     <div class="grid grid-cols-12 gap-1 text-[10px] font-bold text-center mb-1 text-gray-500">
-                        <div class="col-span-5 text-left pl-1">Subject</div>
-                        <div class="col-span-1">FA1</div><div class="col-span-1">FA2</div><div class="col-span-1">FA3</div>
+                        <div class="col-span-4 text-left pl-1">Subject</div>
+                        <div class="col-span-1 text-indigo-700">Max</div> <div class="col-span-1">FA1</div><div class="col-span-1">FA2</div><div class="col-span-1">FA3</div>
                         <div class="col-span-1">SA1</div><div class="col-span-1">SA2</div>
-                        <div class="col-span-2"></div>
+                        <div class="col-span-1"></div>
                     </div>
                     <div id="sess_marks" class="space-y-1 max-h-48 overflow-y-auto custom-scroll p-1"></div>
-                    <button onclick="addSubjectRow()" class="mt-2 text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center">
-                        <i class="fas fa-plus-circle mr-1"></i> Add Subject
-                    </button>
+                    <button onclick="addSubjectRow()" class="mt-2 text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center"><i class="fas fa-plus-circle mr-1"></i> Add Subject</button>
                 </div>
 
                 <div class="border rounded p-3 bg-green-50 border-green-200 shadow-sm">
                     <h4 class="font-bold text-green-800 text-xs uppercase mb-2 border-b border-green-200 pb-1">Part B & C: Holistic Areas</h4>
-                    
                     <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="text-[10px] font-bold text-green-700 uppercase">Arts Education</label>
-                            <select id="co_arts" class="w-full border p-1 text-sm rounded bg-white focus:ring-1 focus:ring-green-500">
-                                <option value="Participated">Participated</option>
-                                <option value="Excellent">Excellent</option>
-                                <option value="Proficient">Proficient</option>
-                                <option value="Developing">Developing</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-green-700 uppercase">Health & PE</label>
-                            <select id="co_pe" class="w-full border p-1 text-sm rounded bg-white focus:ring-1 focus:ring-green-500">
-                                <option value="Participated">Participated</option>
-                                <option value="Athletic">Athletic/Active</option>
-                                <option value="Developing">Developing</option>
-                            </select>
-                        </div>
+                        <div><label class="text-[10px] font-bold text-green-700 uppercase">Arts Education</label><select id="co_arts" class="w-full border p-1 text-sm rounded bg-white"><option value="Participated">Participated</option><option value="Excellent">Excellent</option><option value="Proficient">Proficient</option><option value="Developing">Developing</option></select></div>
+                        <div><label class="text-[10px] font-bold text-green-700 uppercase">Health & PE</label><select id="co_pe" class="w-full border p-1 text-sm rounded bg-white"><option value="Participated">Participated</option><option value="Athletic">Athletic/Active</option><option value="Developing">Developing</option></select></div>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="text-[10px] font-bold text-green-700 uppercase">Life Skills / Values</label>
-                        <input id="co_values" class="w-full border p-1 text-sm rounded focus:ring-1 focus:ring-green-500" placeholder="e.g. Honest, Helpful, Creative">
-                    </div>
-                     <div class="mb-3">
-                        <label class="text-[10px] font-bold text-green-700 uppercase">Socio-Emotional</label>
-                        <input id="ps_emotion" class="w-full border p-1 text-sm rounded focus:ring-1 focus:ring-green-500" placeholder="e.g. Shows leadership, empathy">
-                    </div>
+                    <div class="mb-3"><label class="text-[10px] font-bold text-green-700 uppercase">Life Skills / Values</label><input id="co_values" class="w-full border p-1 text-sm rounded" placeholder="e.g. Honest, Helpful"></div>
+                     <div class="mb-3"><label class="text-[10px] font-bold text-green-700 uppercase">Socio-Emotional</label><input id="ps_emotion" class="w-full border p-1 text-sm rounded" placeholder="e.g. Shows leadership"></div>
                 </div>
             </div>
 
             <div class="mt-4 border rounded p-3 bg-yellow-50 border-yellow-200 shadow-sm">
                 <h4 class="font-bold text-yellow-800 text-xs uppercase mb-2 border-b border-yellow-200 pb-1">Part D: 360° Feedback & Reflections</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs font-bold text-yellow-700">Student Self-Reflection</label>
-                        <textarea id="ref_student" class="w-full border rounded p-2 text-sm h-16 focus:ring-1 focus:ring-yellow-500" placeholder="What did I learn?"></textarea>
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-yellow-700">Peer Feedback</label>
-                        <textarea id="ref_peer" class="w-full border rounded p-2 text-sm h-16 focus:ring-1 focus:ring-yellow-500" placeholder="What do friends say?"></textarea>
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-yellow-700">Parent Feedback</label>
-                        <textarea id="ref_parent" class="w-full border rounded p-2 text-sm h-16 focus:ring-1 focus:ring-yellow-500" placeholder="Parents' view"></textarea>
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-yellow-700">Teacher Remarks</label>
-                        <textarea id="sess_remarks" class="w-full border rounded p-2 text-sm h-16 focus:ring-1 focus:ring-yellow-500" placeholder="Final verdict/Promotional status"></textarea>
-                    </div>
+                    <div><label class="text-xs font-bold text-yellow-700">Student Self-Reflection</label><textarea id="ref_student" class="w-full border rounded p-2 text-sm h-16" placeholder="What did I learn?"></textarea></div>
+                    <div><label class="text-xs font-bold text-yellow-700">Peer Feedback</label><textarea id="ref_peer" class="w-full border rounded p-2 text-sm h-16" placeholder="What do friends say?"></textarea></div>
+                    <div><label class="text-xs font-bold text-yellow-700">Parent Feedback</label><textarea id="ref_parent" class="w-full border rounded p-2 text-sm h-16" placeholder="Parents' view"></textarea></div>
+                    <div><label class="text-xs font-bold text-yellow-700">Teacher Remarks</label><textarea id="sess_remarks" class="w-full border rounded p-2 text-sm h-16" placeholder="Final verdict"></textarea></div>
                 </div>
             </div>
 
@@ -283,7 +186,6 @@
     </div>
 
     <script>
-        // Constants & State
         const STORAGE_KEY = 'school_db_nep_v1';
         let db = { students: [] };
         let tempSessions = [];
@@ -308,15 +210,12 @@
 
         window.onload = async () => {
             const cached = localStorage.getItem(STORAGE_KEY);
-            if(cached) { 
-                db = JSON.parse(cached); 
-                renderMainTable(); 
-                populateSettings(); 
-            } else { 
+            if(cached) { db = JSON.parse(cached); renderMainTable(); populateSettings(); } 
+            else { 
                 try {
                     const res = await fetch('students_db.json');
                     if(res.ok) { db = await res.json(); renderMainTable(); populateSettings(); }
-                } catch(e) { console.log("No initial DB file found."); }
+                } catch(e) {}
             }
         };
 
@@ -331,32 +230,22 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
         }
 
-        // --- RESTORED HARD RESET FUNCTION ---
         function hardReset() {
-            if(confirm("This will discard all local changes and reload from the 'students_db.json' file. Are you sure?")) {
+            if(confirm("Discard changes and reload from file?")) {
                 localStorage.removeItem(STORAGE_KEY);
                 location.reload();
             }
         }
 
-        // --- RENDER MAIN TABLE (UPDATED) ---
         function renderMainTable() {
             const tbody = document.getElementById('mainTableBody');
             tbody.innerHTML = '';
             const query = document.getElementById('searchBar').value.toLowerCase();
-            
-            const list = db.students.filter(s => 
-                (s.name && s.name.toLowerCase().includes(query)) || 
-                (s.admNo && s.admNo.includes(query)) || 
-                (s.studentId && s.studentId.includes(query))
-            );
-            
+            const list = db.students.filter(s => (s.name && s.name.toLowerCase().includes(query)) || (s.admNo && s.admNo.includes(query)) || (s.studentId && s.studentId.includes(query)));
             document.getElementById('recordCountDisplay').innerText = `${list.length} records`;
-
             list.forEach((s) => {
                 const idx = db.students.indexOf(s);
                 const cls = s.sessions && s.sessions.length ? s.sessions[s.sessions.length-1].class : '-';
-                
                 tbody.innerHTML += `
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">${s.admNo}</td>
@@ -365,87 +254,57 @@
                     <td class="px-6 py-4 text-sm text-gray-500">F: ${s.father || '-'}<br>M: ${s.mother || '-'}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${s.gender || '-'}</td>
                     <td class="px-6 py-4 text-sm font-semibold text-indigo-600">${cls}</td>
-                    <td class="px-6 py-4 text-sm align-top">
-                        <button onclick="viewHistory(${idx})" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100 px-3 py-1 rounded-full text-xs font-bold transition">
-                            View <i class="fas fa-chevron-right ml-1"></i>
-                        </button>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <button onclick="openStudentModal(${idx})" class="text-blue-600 hover:text-blue-800 mr-3" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteStudent(${idx})" class="text-red-600 hover:text-red-800" title="Delete"><i class="fas fa-trash"></i></button>
-                    </td>
+                    <td class="px-6 py-4 text-sm align-top"><button onclick="viewHistory(${idx})" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100 px-3 py-1 rounded-full text-xs font-bold transition">View <i class="fas fa-chevron-right ml-1"></i></button></td>
+                    <td class="px-6 py-4 text-right"><button onclick="openStudentModal(${idx})" class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button><button onclick="deleteStudent(${idx})" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button></td>
                 </tr>`;
             });
         }
 
-        // --- HISTORY VIEWER ---
         function viewHistory(index) {
             const s = db.students[index];
             if (!s) return;
-
             document.getElementById('historyModalSubtitle').innerText = `${s.name} (Adm: ${s.admNo})`;
             const tbody = document.getElementById('historyTableBody');
             tbody.innerHTML = '';
-
             if (!s.sessions || s.sessions.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">No academic history recorded.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">No academic history.</td></tr>';
             } else {
                 const sortedSessions = [...s.sessions].sort((a, b) => b.session.localeCompare(a.session));
-
                 sortedSessions.forEach(sess => {
                     let grandTotal = 0;
                     let maxMarks = 0;
-
                     if (sess.subjects) {
                         sess.subjects.forEach(sub => {
                             grandTotal += (sub.fa1||0) + (sub.fa2||0) + (sub.fa3||0) + (sub.sa1||0) + (sub.sa2||0);
-                            maxMarks += 100;
+                            maxMarks += (sub.max || 100); // Use stored max or default 100
                         });
                     }
-
                     const percentage = maxMarks > 0 ? (grandTotal / maxMarks) * 100 : 0;
                     const grade = maxMarks > 0 ? calculateGrade(percentage) : '-';
-
-                    const row = document.createElement('tr');
-                    row.className = "hover:bg-gray-50";
-                    row.innerHTML = `
+                    tbody.innerHTML += `<tr class="hover:bg-gray-50">
                         <td class="px-4 py-3 text-sm text-gray-900 font-medium">${sess.session}</td>
                         <td class="px-4 py-3 text-sm text-gray-700">${sess.class}</td>
                         <td class="px-4 py-3 text-sm text-gray-700">${sess.section || '-'}</td>
                         <td class="px-4 py-3 text-sm text-gray-700 font-mono">${sess.rollNo}</td>
                         <td class="px-4 py-3 text-sm text-right font-medium text-indigo-600">${grandTotal} <span class="text-xs text-gray-400">/ ${maxMarks}</span></td>
                         <td class="px-4 py-3 text-sm text-center font-bold text-gray-800">${grade}</td>
-                    `;
-                    tbody.appendChild(row);
+                    </tr>`;
                 });
             }
             document.getElementById('historyModal').classList.remove('hidden');
         }
+        function closeHistoryModal() { document.getElementById('historyModal').classList.add('hidden'); }
 
-        function closeHistoryModal() {
-            document.getElementById('historyModal').classList.add('hidden');
-        }
-
-        // --- STUDENT CRUD (UPDATED with Gender, Category, Aadhaar) ---
         function openStudentModal(index = -1) {
             currentStudentIndex = index;
             document.getElementById('studentModal').classList.remove('hidden');
-            
             if(index === -1) {
-                // NEW STUDENT
                 document.getElementById('studentId').value = generateTimestampId();
-                document.getElementById('admNo').value = '';
-                document.getElementById('name').value = '';
-                document.getElementById('father').value = '';
-                document.getElementById('mother').value = '';
-                document.getElementById('dob').value = '';
-                document.getElementById('contact').value = '';
-                document.getElementById('aadhaar').value = '';
+                ['admNo','name','father','mother','dob','contact','aadhaar'].forEach(id => document.getElementById(id).value = '');
                 document.getElementById('gender').value = 'Male';
                 document.getElementById('category').value = 'General / Open';
                 tempSessions = [];
             } else {
-                // EDIT STUDENT
                 const s = db.students[index];
                 document.getElementById('studentId').value = s.studentId || generateTimestampId();
                 document.getElementById('admNo').value = s.admNo;
@@ -478,51 +337,39 @@
             };
             if(currentStudentIndex === -1) db.students.push(s);
             else db.students[currentStudentIndex] = s;
-            
             saveToLocal();
             closeStudentModal();
             renderMainTable();
         }
-
         function closeStudentModal() { document.getElementById('studentModal').classList.add('hidden'); }
-        function deleteStudent(i) { if(confirm("Delete this student record completely?")) { db.students.splice(i,1); saveToLocal(); renderMainTable(); } }
+        function deleteStudent(i) { if(confirm("Delete record?")) { db.students.splice(i,1); saveToLocal(); renderMainTable(); } }
 
-        // --- SESSION LOGIC (V2 STRICTLY PRESERVED) ---
         function renderSessionsList() {
             document.getElementById('sessionsList').innerHTML = tempSessions.map((s,i) => `
                 <div class="flex justify-between items-center bg-gray-50 p-3 rounded border border-gray-200 hover:bg-gray-100 transition">
-                    <div class="text-sm">
-                        <span class="font-bold text-indigo-700">${s.session}</span> 
-                        <span class="mx-2">|</span> Class: <b>${s.class}</b> 
-                        <span class="mx-2">|</span> Roll: ${s.rollNo}
-                    </div>
+                    <div class="text-sm"><span class="font-bold text-indigo-700">${s.session}</span> <span class="mx-2">|</span> Class: <b>${s.class}</b> <span class="mx-2">|</span> Roll: ${s.rollNo}</div>
                     <div class="flex gap-2">
                         <button onclick="openSessionForm(${i})" class="text-blue-600 hover:text-blue-800 font-medium text-xs px-2 py-1 bg-blue-50 rounded border border-blue-200">Edit</button>
                         <button onclick="tempSessions.splice(${i},1); renderSessionsList();" class="text-red-600 hover:text-red-800 font-medium text-xs px-2 py-1 bg-red-50 rounded border border-red-200">Del</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
         function openSessionForm(idx = -1) {
             document.getElementById('sessionFormOverlay').classList.remove('hidden');
             document.getElementById('sess_index').value = idx;
-            
             let d = {};
             if(idx > -1) d = tempSessions[idx];
             
-            // Basic
             document.getElementById('sess_year').value = d.session || '2024-2025';
             document.getElementById('sess_class').value = d.class || 'LKG';
             document.getElementById('sess_section').value = d.section || '';
             document.getElementById('sess_roll').value = d.rollNo || '';
             
-            // Attendance
             const att = d.attendance || {};
             document.getElementById('att_present').value = att.present || '';
             document.getElementById('att_working').value = att.working || '';
 
-            // Holistic
             const co = d.co_scholastic || {};
             const ps = d.personal_social || {};
             document.getElementById('co_arts').value = co.arts || 'Participated';
@@ -530,37 +377,36 @@
             document.getElementById('co_values').value = co.values || '';
             document.getElementById('ps_emotion').value = ps.emotion || '';
 
-            // Feedback
             const ref = d.reflections || {};
             document.getElementById('ref_student').value = ref.student_goals || d.nep_self_assess || '';
             document.getElementById('ref_peer').value = d.nep_peer_assess || '';
             document.getElementById('ref_parent').value = ref.parent_feedback || '';
             document.getElementById('sess_remarks').value = d.remarks || '';
 
-            // Marks
             const container = document.getElementById('sess_marks');
             container.innerHTML = '';
             (d.subjects || []).forEach(sub => addSubjectRowUI(sub));
         }
 
-        function addSubjectRowUI(sub = {name:'', fa1:'', fa2:'', fa3:'', sa1:'', sa2:''}) {
+        // UPDATED: Added Max Marks Input in Row
+        function addSubjectRowUI(sub = {name:'', max:100, fa1:'', fa2:'', fa3:'', sa1:'', sa2:''}) {
             const d = document.createElement('div');
             d.className = "grid grid-cols-12 gap-1 items-center mb-1 subject-row";
             d.innerHTML = `
-                <input class="col-span-5 border px-1 text-sm rounded" value="${sub.name}" placeholder="Subject Name">
+                <input class="col-span-4 border px-1 text-sm rounded" value="${sub.name}" placeholder="Subject Name">
+                <input type="number" class="col-span-1 border text-center text-sm rounded bg-indigo-50 text-indigo-700 font-bold" value="${sub.max||100}" placeholder="100">
                 <input type="number" class="col-span-1 border text-center text-sm rounded" value="${sub.fa1}" placeholder="-">
                 <input type="number" class="col-span-1 border text-center text-sm rounded" value="${sub.fa2}" placeholder="-">
                 <input type="number" class="col-span-1 border text-center text-sm rounded" value="${sub.fa3}" placeholder="-">
                 <input type="number" class="col-span-1 border text-center text-sm rounded" value="${sub.sa1}" placeholder="-">
                 <input type="number" class="col-span-1 border text-center text-sm rounded" value="${sub.sa2}" placeholder="-">
-                <div class="col-span-2 text-center">
-                    <button onclick="this.parentNode.parentNode.remove()" class="text-red-500 hover:text-red-700"><i class="fas fa-times"></i></button>
-                </div>
+                <div class="col-span-1 text-center"><button onclick="this.parentNode.parentNode.remove()" class="text-red-500 hover:text-red-700"><i class="fas fa-times"></i></button></div>
             `;
             document.getElementById('sess_marks').appendChild(d);
         }
         function addSubjectRow() { addSubjectRowUI(); }
 
+        // UPDATED: Save Max Marks
         function saveSessionData() {
             const idx = parseInt(document.getElementById('sess_index').value);
             const subjects = [];
@@ -568,8 +414,9 @@
                 const i = r.querySelectorAll('input');
                 if(i[0].value) subjects.push({
                     name: i[0].value, 
-                    fa1: Number(i[1].value)||0, fa2: Number(i[2].value)||0, fa3: Number(i[3].value)||0,
-                    sa1: Number(i[4].value)||0, sa2: Number(i[5].value)||0
+                    max: Number(i[1].value)||100, // CAPTURE MAX MARKS
+                    fa1: Number(i[2].value)||0, fa2: Number(i[3].value)||0, fa3: Number(i[4].value)||0,
+                    sa1: Number(i[5].value)||0, sa2: Number(i[6].value)||0
                 });
             });
 
@@ -579,22 +426,10 @@
                 section: document.getElementById('sess_section').value,
                 rollNo: document.getElementById('sess_roll').value,
                 remarks: document.getElementById('sess_remarks').value,
-                attendance: {
-                    present: document.getElementById('att_present').value,
-                    working: document.getElementById('att_working').value
-                },
-                co_scholastic: {
-                    arts: document.getElementById('co_arts').value,
-                    pe: document.getElementById('co_pe').value,
-                    values: document.getElementById('co_values').value
-                },
-                personal_social: {
-                    emotion: document.getElementById('ps_emotion').value
-                },
-                reflections: {
-                    student_goals: document.getElementById('ref_student').value,
-                    parent_feedback: document.getElementById('ref_parent').value
-                },
+                attendance: { present: document.getElementById('att_present').value, working: document.getElementById('att_working').value },
+                co_scholastic: { arts: document.getElementById('co_arts').value, pe: document.getElementById('co_pe').value, values: document.getElementById('co_values').value },
+                personal_social: { emotion: document.getElementById('ps_emotion').value },
+                reflections: { student_goals: document.getElementById('ref_student').value, parent_feedback: document.getElementById('ref_parent').value },
                 nep_peer_assess: document.getElementById('ref_peer').value,
                 subjects: subjects
             };

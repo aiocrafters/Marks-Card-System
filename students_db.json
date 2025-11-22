@@ -23,9 +23,9 @@
       "name": "Fatima Khan",
       "father": "Arif Singh",
       "mother": "Neelam Patel",
-      "aadhaar": "2679-9935-2424",
-      "contact": "9989254563",
       "dob": "2009-06-01",
+      "contact": "9989254563",
+      "aadhaar": "2679-9935-2424",
       "gender": "Female",
       "category": "General / Open",
       "sessions": [
@@ -593,10 +593,30 @@
         {
           "session": "2024-2025",
           "class": "10th",
+          "section": "",
           "rollNo": "1",
+          "remarks": "",
+          "attendance": {
+            "present": "",
+            "working": ""
+          },
+          "co_scholastic": {
+            "arts": "Participated",
+            "pe": "Participated",
+            "values": ""
+          },
+          "personal_social": {
+            "emotion": ""
+          },
+          "reflections": {
+            "student_goals": "",
+            "parent_feedback": ""
+          },
+          "nep_peer_assess": "",
           "subjects": [
             {
               "name": "English",
+              "max": 50,
               "fa1": 20,
               "fa2": 19,
               "fa3": 27,
@@ -605,6 +625,7 @@
             },
             {
               "name": "Mathematics",
+              "max": 100,
               "fa1": 24,
               "fa2": 19,
               "fa3": 27,
@@ -613,6 +634,7 @@
             },
             {
               "name": "Physics",
+              "max": 100,
               "fa1": 27,
               "fa2": 19,
               "fa3": 24,
@@ -621,6 +643,7 @@
             },
             {
               "name": "Chemistry",
+              "max": 100,
               "fa1": 21,
               "fa2": 28,
               "fa3": 29,
@@ -629,6 +652,7 @@
             },
             {
               "name": "Biology",
+              "max": 100,
               "fa1": 22,
               "fa2": 24,
               "fa3": 20,
@@ -637,6 +661,7 @@
             },
             {
               "name": "Computer",
+              "max": 100,
               "fa1": 23,
               "fa2": 30,
               "fa3": 19,
@@ -645,6 +670,7 @@
             },
             {
               "name": "Urdu",
+              "max": 100,
               "fa1": 27,
               "fa2": 27,
               "fa3": 19,

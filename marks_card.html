@@ -237,7 +237,6 @@
     </div>
 
     <script>
-        // --- STATE ---
         let resultRegister = [];
         let supportedSessions = [];
         let schoolInfo = { name: "Government High School", address: "Department of School Education" };
@@ -284,7 +283,6 @@
             }
         }
 
-        // --- SEARCH & FILTER ---
         function handleEnter(e) { if(e.key === 'Enter') searchStudent(); }
 
         function getClassWeight(cls) {
@@ -374,7 +372,6 @@
             });
         }
 
-        // --- GENERATOR ---
         function getNEPLevel(percentage) {
             if(percentage >= 85) return { label: "EXEMPLARY", class: "bg-exem" };
             if(percentage >= 65) return { label: "PROFICIENT", class: "bg-prof" };
@@ -394,29 +391,31 @@
         }
 
         function generateNEPCard(p, s) {
-            let grandSum = 0, count = 0, maxMarks = 0;
+            let grandSum = 0, count = 0, totalMaxMarks = 0;
             
+            // UPDATED: USE DYNAMIC MAX MARKS
             const marksRows = (s.subjects || []).map(sub => {
                 const total = (sub.fa1||0)+(sub.fa2||0)+(sub.fa3||0)+(sub.sa1||0)+(sub.sa2||0);
+                const subMax = sub.max || 100; // Default to 100 if missing
                 grandSum += total; 
                 count++; 
-                maxMarks += 100; // Assume 100 per subject
+                totalMaxMarks += subMax;
                 
-                const level = getNEPLevel(total);
-                const stdGrade = getStandardGrade(total);
+                const percentage = (total / subMax) * 100;
+                const level = getNEPLevel(percentage);
+                const stdGrade = getStandardGrade(percentage);
                 
                 return `<tr>
                     <td class="text-left-align font-semibold text-gray-700">${sub.name}</td>
                     <td>${sub.fa1||'-'}</td><td>${sub.fa2||'-'}</td><td>${sub.fa3||'-'}</td>
                     <td>${sub.sa1||'-'}</td><td>${sub.sa2||'-'}</td>
-                    <td>100</td>
-                    <td class="font-bold text-gray-800">${total}</td>
+                    <td>${subMax}</td> <td class="font-bold text-gray-800">${total}</td>
                     <td class="font-bold text-indigo-700">${stdGrade}</td>
                     <td><span class="badge ${level.class}">${level.label}</span></td>
                 </tr>`;
             }).join('');
             
-            const overallPct = count ? (grandSum / maxMarks)*100 : 0;
+            const overallPct = totalMaxMarks > 0 ? (grandSum / totalMaxMarks)*100 : 0;
             const overallLevel = getNEPLevel(overallPct);
             const overallGrade = getStandardGrade(overallPct);
 
@@ -484,7 +483,7 @@
                         <tr class="bg-gray-50 font-bold">
                             <td class="text-left-align">GRAND TOTAL</td>
                             <td colspan="5" class="text-right pr-2 text-gray-400 text-[10px]">AGGREGATE:</td>
-                            <td class="text-base font-bold text-gray-600">${maxMarks}</td>
+                            <td class="text-base font-bold text-gray-600">${totalMaxMarks}</td>
                             <td class="text-base font-bold text-gray-900">${grandSum}</td>
                             <td class="text-base text-indigo-800">${overallGrade}</td>
                             <td><span class="badge ${overallLevel.class}">${overallLevel.label}</span></td>
