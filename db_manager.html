@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student DB Manager - Persistent</title>
+    <title>Student DB Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -16,7 +16,6 @@
 </head>
 <body class="bg-gray-100 h-screen flex flex-col">
 
-    <!-- Header -->
     <div class="bg-white shadow-sm z-10 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center">
             <h1 class="text-xl font-bold text-gray-800"><i class="fas fa-database text-indigo-600 mr-2"></i>Student DB Manager</h1>
@@ -40,11 +39,9 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="flex-1 overflow-auto p-6">
         <div class="max-w-full mx-auto bg-white rounded-lg shadow"> 
             
-            <!-- Global Settings Card -->
             <div class="p-6 bg-indigo-50 border-b">
                 <h2 class="font-bold text-gray-700 mb-4"><i class="fas fa-school mr-2"></i>School & Global Settings</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -59,7 +56,6 @@
                 </div>
             </div>
 
-            <!-- Search Bar -->
             <div class="p-4 border-b bg-gray-50 flex items-center">
                 <div class="relative w-full max-w-md">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -72,7 +68,6 @@
                 <span class="ml-4 text-sm text-gray-500" id="recordCountDisplay"></span>
             </div>
 
-            <!-- MAIN TABLE -->
             <div class="overflow-x-auto">
                  <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -95,7 +90,6 @@
         </div>
     </div>
 
-    <!-- STUDENT MODAL (Add/Edit) -->
     <div id="studentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto z-50 flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
             <div class="p-6 border-b flex justify-between">
@@ -103,9 +97,7 @@
                 <button onclick="closeStudentModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="p-6">
-                <!-- Personal Form -->
                 <div class="grid grid-cols-3 gap-4 mb-6">
-                    <!-- Visible Student ID Field -->
                     <div>
                         <label class="text-xs font-bold text-gray-500">Adm No</label>
                         <input id="admNo" class="w-full border rounded p-2">
@@ -144,7 +136,6 @@
                             <i class="fas fa-plus mr-1"></i> Add Session
                         </button>
                     </div>
-                    <!-- Sessions List inside Modal -->
                     <div id="sessionsList" class="space-y-2"></div>
                 </div>
             </div>
@@ -154,7 +145,6 @@
         </div>
     </div>
 
-    <!-- HISTORY VIEW MODAL (NEW) -->
     <div id="historyModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden z-[60] flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
             <div class="p-5 border-b flex justify-between items-center bg-gray-50">
@@ -178,8 +168,7 @@
                             </tr>
                         </thead>
                         <tbody id="historyTableBody" class="bg-white divide-y divide-gray-200">
-                            <!-- Populated by JS -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
@@ -189,34 +178,43 @@
         </div>
     </div>
 
-    <!-- SESSION FORM OVERLAY (EDITING) -->
     <div id="sessionFormOverlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden z-[70] flex items-center justify-center">
-        <div class="bg-white rounded w-full max-w-4xl p-6 shadow-2xl">
-            <h3 class="font-bold text-lg mb-4">Edit Session Data</h3>
+        <div class="bg-white rounded w-full max-w-4xl p-6 shadow-2xl max-h-[95vh] overflow-y-auto custom-scroll">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="font-bold text-lg">Edit Session Data</h3>
+            </div>
             <input type="hidden" id="sess_index">
-            <!-- Expanded Grid for Section Field -->
+            
             <div class="grid grid-cols-4 gap-4 mb-4">
                 <div>
                     <label class="text-xs font-bold">Session Year</label>
                     <select id="sess_year" class="w-full border rounded p-2">
-                        <!-- Populated dynamically -->
-                    </select>
+                        </select>
                 </div>
                 <div>
-                    <label class="text-xs font-bold">Class</label>
+                    <label class="text-xs font-bold">Class (Stage)</label>
                     <select id="sess_class" class="w-full border rounded p-2 bg-white">
-                        <option value="LKG">LKG</option>
-                        <option value="UKG">UKG</option>
-                        <option value="1st">1st</option>
-                        <option value="2nd">2nd</option>
-                        <option value="3rd">3rd</option>
-                        <option value="4th">4th</option>
-                        <option value="5th">5th</option>
-                        <option value="6th">6th</option>
-                        <option value="7th">7th</option>
-                        <option value="8th">8th</option>
-                        <option value="9th">9th</option>
-                        <option value="10th">10th</option>
+                        <optgroup label="Foundational Stage (Ages 3-8)">
+                            <option value="Nursery">Nursery</option>
+                            <option value="LKG">LKG</option>
+                            <option value="UKG">UKG</option>
+                            <option value="1st">1st</option>
+                            <option value="2nd">2nd</option>
+                        </optgroup>
+                        <optgroup label="Preparatory Stage (Ages 8-11)">
+                            <option value="3rd">3rd</option>
+                            <option value="4th">4th</option>
+                            <option value="5th">5th</option>
+                        </optgroup>
+                        <optgroup label="Middle Stage (Ages 11-14)">
+                            <option value="6th">6th</option>
+                            <option value="7th">7th</option>
+                            <option value="8th">8th</option>
+                        </optgroup>
+                        <optgroup label="Secondary Stage (Ages 14-18)">
+                            <option value="9th">9th</option>
+                            <option value="10th">10th</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div>
@@ -229,15 +227,8 @@
                 </div>
             </div>
 
-            <!-- NEW: Remarks Input -->
-            <div class="mb-4">
-                <label class="text-xs font-bold">Class Teacher's Remarks</label>
-                <input id="sess_remarks" class="w-full border rounded p-2" placeholder="e.g. Promoted to next class with excellent performance.">
-            </div>
-
-            <!-- Marks Container -->
-            <div class="border rounded p-2 mb-4 bg-gray-50">
-                <!-- Header -->
+            <div class="border rounded p-3 mb-4 bg-gray-50">
+                <h4 class="font-bold text-gray-700 mb-2 text-sm uppercase">Scholastic Assessment (Marks)</h4>
                 <div class="grid grid-cols-12 gap-2 text-xs font-bold text-center mb-2 px-2">
                     <div class="col-span-5 text-left">Subject Name</div>
                     <div class="col-span-1">FA1</div>
@@ -248,17 +239,53 @@
                     <div class="col-span-2">Action</div>
                 </div>
                 
-                <!-- Rows Wrapper -->
-                <div id="sess_marks" class="space-y-2 max-h-60 overflow-y-auto custom-scroll">
-                    <!-- Rows injected via JS -->
-                </div>
+                <div id="sess_marks" class="space-y-2 max-h-40 overflow-y-auto custom-scroll">
+                    </div>
 
-                <!-- Add Subject Button -->
                 <div class="mt-3 pt-2 border-t flex justify-start">
                     <button type="button" onclick="addSubjectRow()" class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded flex items-center">
                         <i class="fas fa-plus mr-1"></i> Add Subject
                     </button>
                 </div>
+            </div>
+
+            <div class="border rounded p-4 mb-4 bg-green-50 border-green-200">
+                <h4 class="font-bold text-green-800 mb-3 text-sm flex items-center">
+                    <i class="fas fa-leaf mr-2"></i> Holistic Progress & 360° Assessment
+                </h4>
+                
+                <div class="grid grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="text-xs font-bold text-green-700">Self Assessment (Student's View)</label>
+                        <input id="nep_self_assess" class="w-full border border-green-200 rounded p-2 text-sm" placeholder="e.g. I understood Math well but need help in Science">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-green-700">Peer Assessment (Friend's View)</label>
+                        <input id="nep_peer_assess" class="w-full border border-green-200 rounded p-2 text-sm" placeholder="e.g. Very helpful in group projects">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="text-xs font-bold text-green-700">Project / Vocational Craft</label>
+                        <input id="nep_project" class="w-full border border-green-200 rounded p-2 text-sm" placeholder="e.g. Pottery, Coding Project, Gardening">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-green-700">Socio-Emotional Grade</label>
+                        <select id="nep_se_grade" class="w-full border border-green-200 rounded p-2 text-sm bg-white">
+                            <option value="">Select Grade...</option>
+                            <option value="A+">A+ (Excellent)</option>
+                            <option value="A">A (Very Good)</option>
+                            <option value="B">B (Good)</option>
+                            <option value="C">C (Needs Improvement)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="text-xs font-bold">Class Teacher's Final Remarks</label>
+                <input id="sess_remarks" class="w-full border rounded p-2" placeholder="e.g. Promoted to next class with excellent performance.">
             </div>
 
             <div class="flex justify-end gap-2">
@@ -270,14 +297,14 @@
 
     <script>
         // --- CONSTANTS ---
-        const STORAGE_KEY = 'school_db_cache_v1';
-        const defaultSubjects = ["English", "Mathematics", "Urdu", "Kashmiri", "Science"];
+        const STORAGE_KEY = 'school_db_cache_v2_nep'; // Updated key version
+        const defaultSubjects = ["English", "Mathematics", "Urdu", "Kashmiri", "Science", "Social Science"];
 
         // --- STATE ---
         let db = { 
             school_name: "Government High School",
             school_department: "Address Line Here",
-            supported_sessions: ["2023-2024", "2024-2025"], 
+            supported_sessions: ["2023-2024", "2024-2025", "2025-2026"], 
             students: [] 
         };
         let currentStudentIndex = -1;
@@ -330,7 +357,6 @@
                 renderMainTable();
             } catch(e) { 
                 console.error("Load failed", e); 
-                alert("Could not load students_db.json. Ensure you are running on a local server."); 
             }
         }
 
@@ -578,7 +604,19 @@
 
             let data = {};
             if(sessIdx === -1) {
-                data = { session: supported[supported.length-1], class: 'LKG', section: '', rollNo: '', remarks: '', subjects: defaultSubjects.map(n => ({name:n, fa1:0, fa2:0, fa3:0, sa1:0, sa2:0})) };
+                // Default structure for new session
+                data = { 
+                    session: supported[supported.length-1], 
+                    class: 'LKG', 
+                    section: '', 
+                    rollNo: '', 
+                    remarks: '', 
+                    nep_self_assess: '',
+                    nep_peer_assess: '',
+                    nep_project: '',
+                    nep_se_grade: '',
+                    subjects: defaultSubjects.map(n => ({name:n, fa1:0, fa2:0, fa3:0, sa1:0, sa2:0})) 
+                };
             } else {
                 data = tempSessions[sessIdx];
             }
@@ -587,8 +625,14 @@
             document.getElementById('sess_class').value = data.class;
             document.getElementById('sess_section').value = data.section || ''; 
             document.getElementById('sess_roll').value = data.rollNo;
-            // NEW: Load Remarks
             document.getElementById('sess_remarks').value = data.remarks || ''; 
+            
+            // Populate NEP Fields
+            document.getElementById('nep_self_assess').value = data.nep_self_assess || '';
+            document.getElementById('nep_peer_assess').value = data.nep_peer_assess || '';
+            document.getElementById('nep_project').value = data.nep_project || '';
+            document.getElementById('nep_se_grade').value = data.nep_se_grade || '';
+
             renderMarksInputs(data.subjects);
         }
 
@@ -648,8 +692,12 @@
                 class: document.getElementById('sess_class').value,
                 section: document.getElementById('sess_section').value, 
                 rollNo: document.getElementById('sess_roll').value,
-                // NEW: Save Remarks
                 remarks: document.getElementById('sess_remarks').value,
+                // NEP Fields saving
+                nep_self_assess: document.getElementById('nep_self_assess').value,
+                nep_peer_assess: document.getElementById('nep_peer_assess').value,
+                nep_project: document.getElementById('nep_project').value,
+                nep_se_grade: document.getElementById('nep_se_grade').value,
                 subjects: newSubjects
             };
 
@@ -674,7 +722,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = "students_db.json";
+            a.download = "students_db.json"; // Kept generic name
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
