@@ -92,8 +92,7 @@
                 box-shadow: none;
                 margin: 0;
                 width: 100%;
-                /* Fixed height slightly less than 297mm to prevent overflow blank pages */
-                height: 296mm; 
+                height: 296mm; /* Fixed height to prevent blank pages */
                 padding: 10mm 15mm;
                 
                 /* Forces page breaks */
@@ -197,7 +196,6 @@
     </div>
 
     <!-- MAIN CONTAINER FOR CARDS -->
-    <!-- FIXED: Added print:p-0 print:block to remove padding during print -->
     <div class="flex justify-center p-4 print:p-0 print:block">
         <div id="cardsContainer" class="w-full flex flex-col items-center gap-8 print:block print:gap-0">
             
@@ -317,6 +315,16 @@
             });
         }
 
+        // NEW: Helper to determine Sort Weight of a Class (Descending: 10th > LKG)
+        function getClassWeight(cls) {
+            const mapping = {
+                "10th": 14, "9th": 13, "8th": 12, "7th": 11, "6th": 10,
+                "5th": 9, "4th": 8, "3rd": 7, "2nd": 6, "1st": 5,
+                "UKG": 4, "LKG": 3, "Nursery": 2, "Pre-Nursery": 1
+            };
+            return mapping[cls] || 0;
+        }
+
         function searchStudent() {
             const sessionFilter = document.getElementById('sessionFilter').value;
             const classFilter = document.getElementById('classFilter').value;
@@ -376,11 +384,19 @@
                 return;
             }
 
+            // SORTING LOGIC:
+            // 1. Class (Descending: 10th first, then 9th...)
+            // 2. Roll No (Ascending: 1, 2, 3...)
             matches.sort((a, b) => {
-                if (a.session.class !== b.session.class) {
-                    return a.session.class.localeCompare(b.session.class, undefined, {numeric: true});
+                const weightA = getClassWeight(a.session.class);
+                const weightB = getClassWeight(b.session.class);
+
+                if (weightA !== weightB) {
+                    return weightB - weightA; // Descending Class Order
                 }
-                return parseInt(a.session.rollNo) - parseInt(b.session.rollNo);
+                
+                // If classes are same, sort by Roll Number
+                return parseInt(a.session.rollNo || 0) - parseInt(b.session.rollNo || 0);
             });
 
             statusMsg.innerText = `Found ${matches.length} record(s). Ready to print.`;
@@ -485,7 +501,6 @@
                     </tfoot>
                 </table>
 
-                <!-- Remarks (Dynamic) -->
                 <div class="mt-8 border border-black p-4 h-20">
                     <span class="font-bold">Class Teacher's Remarks:</span>
                     <p class="italic mt-2 text-gray-700">${session.remarks || "Promoted to next class."}</p>
