@@ -187,10 +187,12 @@
                 <h2 class="text-2xl font-bold">Welcome to the Marks Card System</h2>
                 <p class="mt-2 max-w-md mx-auto">Use the filters above to find a student.</p>
                 <div class="mt-6 bg-white p-4 rounded-lg border shadow-sm inline-block text-left text-sm">
-                    <p class="font-bold mb-2">Try searching for:</p>
+                    <p class="font-bold mb-2">To Print Bulk / Entire Class:</p>
                     <ul class="list-disc pl-5 space-y-1">
-                        <li>Adm No: <span class="font-mono bg-gray-100 px-1">1</span> (All Sessions)</li>
-                        <li>Student ID: (Select from dropdown)</li>
+                        <li>Select <b>Session</b> (e.g., 2024-2025)</li>
+                        <li>Select <b>Class</b> (e.g., 10th)</li>
+                        <li>Leave <b>Value</b> empty</li>
+                        <li>Click <b>Find</b></li>
                     </ul>
                 </div>
             </div>
@@ -223,15 +225,13 @@
                     resultRegister = data.students || [];
                     supportedSessions = data.supported_sessions || ["2023-2024", "2024-2025"];
                     
-                    // Load School Info if available
                     if(data.school_name) schoolInfo.name = data.school_name;
-                    // NOTE: JSON key is school_department, mapped to address
                     if(data.school_department) schoolInfo.address = data.school_department;
                 }
 
                 // Populate Session Dropdown
                 const sessionSelect = document.getElementById('sessionFilter');
-                sessionSelect.innerHTML = `<option value="All">All Sessions</option>`; // Add All option
+                sessionSelect.innerHTML = `<option value="All">All Sessions</option>`; 
                 
                 supportedSessions.forEach(year => {
                     const opt = document.createElement('option');
@@ -240,7 +240,7 @@
                     sessionSelect.appendChild(opt);
                 });
                 
-                // Select "All" by default to show full history
+                // Default to "All"
                 sessionSelect.value = "All"; 
 
                 statusMsg.innerText = "Database loaded successfully.";
@@ -255,7 +255,7 @@
             }
         }
 
-        // --- 2. SEARCH LOGIC ---
+        // --- 2. SEARCH LOGIC (UPDATED FOR BULK) ---
 
         function handleEnter(e) {
             if(e.key === 'Enter') searchStudent();
@@ -264,15 +264,14 @@
         function updateSearchOptions() {
             const type = document.getElementById('searchType').value;
             const classFilter = document.getElementById('classFilter').value;
-            const sessionFilter = document.getElementById('sessionFilter').value; // 'All' or specific year
+            const sessionFilter = document.getElementById('sessionFilter').value;
             const input = document.getElementById('searchInput');
             const datalist = document.getElementById('dynamicOptions');
 
-            // 1. Update Placeholder
-            if(type === 'admNo') input.placeholder = "Select Admission No...";
-            else if(type === 'rollNo') input.placeholder = "Select Roll No...";
-            else if(type === 'studentId') input.placeholder = "Select ID...";
-            else if(type === 'name') input.placeholder = "Select Student Name...";
+            // 1. Update Placeholder to indicate bulk option
+            if (input.value.trim() === "") {
+                input.placeholder = "Empty = Load All in Class";
+            }
 
             // 2. Clear options
             datalist.innerHTML = '';
@@ -281,10 +280,6 @@
             let options = [];
 
             resultRegister.forEach(student => {
-                // Determine if student is relevant based on filters
-                let isRelevant = false;
-
-                // Check if they have ANY session that matches current filters
                 const matchingSessions = student.sessions.filter(s => {
                     const sessionMatch = (sessionFilter === "All") || (s.session === sessionFilter);
                     const classMatch = (classFilter === "All") || (s.class === classFilter);
@@ -295,18 +290,13 @@
                     if (type === 'admNo') options.push(student.admNo);
                     if (type === 'name') options.push(student.name);
                     if (type === 'studentId') options.push(student.studentId);
-                    
                     if (type === 'rollNo') {
-                        // Push roll numbers from matching sessions
                         matchingSessions.forEach(ms => options.push(ms.rollNo));
                     }
                 }
             });
 
-            // 4. Unique and Sort
             const uniqueOptions = [...new Set(options)].sort();
-
-            // 5. Populate
             uniqueOptions.forEach(val => {
                 const option = document.createElement('option');
                 option.value = val;
@@ -316,62 +306,87 @@
 
         function searchStudent() {
             const sessionFilter = document.getElementById('sessionFilter').value;
+            const classFilter = document.getElementById('classFilter').value;
             const searchType = document.getElementById('searchType').value;
-            const query = document.getElementById('searchInput').value.trim();
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            
             const statusMsg = document.getElementById('statusMsg');
             const container = document.getElementById('cardsContainer');
             const welcome = document.getElementById('welcomeScreen');
 
-            if (!query) {
-                statusMsg.innerText = "Please select or enter a value.";
+            // Clear previous results
+            container.innerHTML = '';
+
+            if (resultRegister.length === 0) {
+                statusMsg.innerText = "Database empty/loading...";
+                container.appendChild(welcome);
                 return;
             }
 
-            // 1. Find the Student Object first
-            const student = resultRegister.find(s => {
-                if (searchType === 'admNo') return s.admNo === query;
-                if (searchType === 'studentId') return s.studentId === query;
-                if (searchType === 'name') return s.name.toLowerCase() === query.toLowerCase();
-                // Roll No is trickier because it lives in sessions, check if ANY session has this roll no
-                if (searchType === 'rollNo') {
-                    return s.sessions.some(sess => sess.rollNo === query);
-                }
-                return false;
-            });
-
-            if (!student) {
-                statusMsg.innerText = `Student not found!`;
+            // Safety Check for Bulk Load
+            if (!query && sessionFilter === "All") {
+                statusMsg.innerText = "Please select a specific Session if loading entire classes.";
                 statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
-                // Show welcome, hide old cards
-                container.innerHTML = ''; 
                 container.appendChild(welcome);
                 welcome.classList.remove('hidden');
                 return;
             }
 
-            // 2. Filter Sessions for this student
-            let sessionsToShow = student.sessions.filter(sess => {
-                if (sessionFilter !== "All" && sess.session !== sessionFilter) return false;
-                return true; 
+            // --- CORE FILTER LOGIC ---
+            let matches = [];
+
+            resultRegister.forEach(student => {
+                student.sessions.forEach(sess => {
+                    let isMatch = true;
+
+                    // 1. Session Filter
+                    if (sessionFilter !== "All" && sess.session !== sessionFilter) isMatch = false;
+
+                    // 2. Class Filter
+                    if (isMatch && classFilter !== "All" && sess.class !== classFilter) isMatch = false;
+
+                    // 3. Search Value Filter (Optional)
+                    if (isMatch && query) {
+                        let queryMatch = false;
+                        if (searchType === 'admNo' && student.admNo.toLowerCase() === query) queryMatch = true;
+                        else if (searchType === 'studentId' && student.studentId === query) queryMatch = true;
+                        else if (searchType === 'name' && student.name.toLowerCase().includes(query)) queryMatch = true;
+                        else if (searchType === 'rollNo' && sess.rollNo === query) queryMatch = true;
+                        
+                        if (!queryMatch) isMatch = false;
+                    }
+
+                    if (isMatch) {
+                        matches.push({ personal: student, session: sess });
+                    }
+                });
             });
 
-            if (sessionsToShow.length === 0) {
-                 statusMsg.innerText = `Student found, but no data for session ${sessionFilter}`;
-                 statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
-                 container.innerHTML = '';
-                 container.appendChild(welcome);
-                 return;
+            if (matches.length === 0) {
+                statusMsg.innerText = "No records found matching filter criteria.";
+                statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-red-500";
+                container.appendChild(welcome);
+                welcome.classList.remove('hidden');
+                return;
             }
 
-            // 3. Render Cards
-            statusMsg.innerText = `Found ${sessionsToShow.length} record(s).`;
-            statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-green-600";
-            
-            // Clear container (removes welcome screen automatically)
-            container.innerHTML = '';
+            // SORTING: Sort by Class, then by Roll Number
+            matches.sort((a, b) => {
+                // Sort by Class Name
+                if (a.session.class !== b.session.class) {
+                    return a.session.class.localeCompare(b.session.class, undefined, {numeric: true});
+                }
+                // Sort by Roll No (Numeric)
+                return parseInt(a.session.rollNo) - parseInt(b.session.rollNo);
+            });
 
-            sessionsToShow.forEach(sessionData => {
-                const cardHTML = generateCardHTML(student, sessionData);
+            // Render Results
+            statusMsg.innerText = `Found ${matches.length} record(s). Ready to print.`;
+            statusMsg.className = "text-center mt-2 text-sm font-medium h-5 text-green-600";
+            welcome.classList.add('hidden');
+
+            matches.forEach(match => {
+                const cardHTML = generateCardHTML(match.personal, match.session);
                 container.insertAdjacentHTML('beforeend', cardHTML);
             });
         }
@@ -389,7 +404,6 @@
             return 'E';
         }
 
-        // Generates the full HTML string for one A4 sheet
         function generateCardHTML(personal, session) {
             const marksRows = (session.subjects || []).map(sub => {
                 const faTotal = (sub.fa1||0) + (sub.fa2||0) + (sub.fa3||0);
@@ -409,7 +423,6 @@
                 `;
             }).join('');
 
-            // Calculate Grand Total
             let grandSum = 0;
             let count = 0;
             (session.subjects || []).forEach(sub => {
